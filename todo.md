@@ -224,3 +224,12 @@
 - [x] Integrate file import into AR Records management page (Import AR Records button with dialogs)
 - [x] Integrate file import into Budgets management page (Import Budgets button with dialogs)
 - [ ] Add bulk import templates for each data type
+- [x] Create export utility functions for Excel and CSV (exportUtils.ts)
+- [x] Add Export Excel button to Customers page
+- [x] Add Export CSV button to Customers page
+- [x] Add Export Excel button to Locations page
+- [x] Add Export CSV button to Locations page
+- [x] Add Export Excel button to AR Records page
+- [x] Add Export CSV button to AR Records page
+- [x] Add Export Excel button to Budgets page
+- [x] Add Export CSV button to Budgets page

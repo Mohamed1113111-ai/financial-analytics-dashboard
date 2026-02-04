@@ -30,7 +30,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Plus, Upload } from "lucide-react";
+import { Plus, Upload, Download } from "lucide-react";
+import { exportToExcel, exportToCSV } from "@/utils/exportUtils";
 import { FileImportDialog } from "@/components/FileImportDialog";
 import { FilePreviewDialog } from "@/components/FilePreviewDialog";
 
@@ -184,6 +185,34 @@ export default function ManageCustomers() {
             >
               <Upload className="w-4 h-4 mr-2" />
               Import Customers
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                try {
+                  exportToExcel(customers, 'customers');
+                  toast.success('Customers exported to Excel');
+                } catch (error) {
+                  toast.error('Failed to export customers');
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export Excel
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                try {
+                  exportToCSV(customers, 'customers');
+                  toast.success('Customers exported to CSV');
+                } catch (error) {
+                  toast.error('Failed to export customers');
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export CSV
             </Button>
           </div>
         </div>
