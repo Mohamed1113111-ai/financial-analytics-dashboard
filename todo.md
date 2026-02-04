@@ -72,6 +72,7 @@
 - [x] Implement location comparison views (LocationComparison.tsx)
 - [x] Create location performance heatmaps (LocationHeatmap.tsx)
 - [x] Write location filtering unit tests (LocationContext.test.ts with 30 tests)
+- [x] FIX: Location button not working - fixed by adding DropdownMenuTrigger with asChild prop
 - [ ] Update tRPC procedures to support location filtering
 - [ ] Update all dashboard pages with location filters
 - [ ] Add location-based data aggregation

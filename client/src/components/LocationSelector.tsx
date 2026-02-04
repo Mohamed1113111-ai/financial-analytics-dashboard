@@ -2,6 +2,7 @@ import { useLocation } from "@/contexts/LocationContext";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
   DropdownMenuSeparator,
@@ -31,16 +32,18 @@ export default function LocationSelector() {
 
   return (
     <DropdownMenu>
-      <Button
-        variant="outline"
-        className="flex items-center gap-2 bg-background hover:bg-muted"
-      >
-        <MapPin className="h-4 w-4" />
-        <span className="hidden sm:inline">{displayText}</span>
-        <ChevronDown className="h-4 w-4 opacity-50" />
-      </Button>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          className="flex items-center gap-2 bg-background hover:bg-muted"
+        >
+          <MapPin className="h-4 w-4" />
+          <span className="hidden sm:inline">{displayText}</span>
+          <ChevronDown className="h-4 w-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56" side="bottom">
         <DropdownMenuLabel className="text-xs font-semibold text-muted-foreground">
           SELECT LOCATIONS
         </DropdownMenuLabel>
