@@ -2,28 +2,56 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { AlertCircle, TrendingUp, Users, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+} from "recharts";
+import {
+  AlertCircle,
+  TrendingUp,
+  TrendingDown,
+  Users,
+  Calendar,
+  Target,
+  Clock,
+  DollarSign,
+  ArrowUpRight,
+  ArrowDownRight,
+} from "lucide-react";
 import { useLocationFilterDisplay } from "@/hooks/useLocationFilter";
 import DashboardLayout from "@/components/DashboardLayout";
-import { EmptyState, EmptyChart } from "@/components/EmptyState";
+import { EmptyState } from "@/components/EmptyState";
 import { ExportButtons } from "@/components/ExportButtons";
 
 // Mock data for AR aging
 const arAgingData = [
-  { bucket: "0-30", amount: 450000, customers: 12, percentage: 35 },
-  { bucket: "31-60", amount: 280000, customers: 8, percentage: 22 },
-  { bucket: "61-90", amount: 220000, customers: 6, percentage: 17 },
-  { bucket: "90+", amount: 350000, customers: 5, percentage: 26 },
+  { bucket: "0-30", amount: 1780000, customers: 45, percentage: 46, trend: 2.5 },
+  { bucket: "31-60", amount: 1140000, customers: 28, percentage: 29, trend: -1.2 },
+  { bucket: "61-90", amount: 612200, customers: 15, percentage: 16, trend: 0.8 },
+  { bucket: "90+", amount: 333500, customers: 8, percentage: 9, trend: 3.1 },
 ];
 
 const forecastData = [
-  { month: "Jan", forecast: 450000, actual: 420000, collected: 380000 },
-  { month: "Feb", forecast: 480000, actual: 510000, collected: 450000 },
-  { month: "Mar", forecast: 520000, actual: 490000, collected: 440000 },
-  { month: "Apr", forecast: 550000, actual: null, collected: null },
-  { month: "May", forecast: 580000, actual: null, collected: null },
-  { month: "Jun", forecast: 610000, actual: null, collected: null },
+  { month: "Jan", forecast: 3500000, actual: 3420000, collected: 3200000, projected: 3450000 },
+  { month: "Feb", forecast: 3650000, actual: 3510000, collected: 3350000, projected: 3600000 },
+  { month: "Mar", forecast: 3800000, actual: 3900000, collected: 3650000, projected: 3750000 },
+  { month: "Apr", forecast: 3950000, actual: null, collected: null, projected: 3900000 },
+  { month: "May", forecast: 4100000, actual: null, collected: null, projected: 4050000 },
+  { month: "Jun", forecast: 4250000, actual: null, collected: null, projected: 4200000 },
 ];
 
 const collectionRateData = [
@@ -34,374 +62,367 @@ const collectionRateData = [
 ];
 
 const customerData = [
-  { name: "Acme Corp", amount: 125000, days: 45, status: "at-risk" },
-  { name: "Tech Solutions", amount: 95000, days: 38, status: "good" },
-  { name: "Global Retail", amount: 180000, days: 52, status: "at-risk" },
-  { name: "Manufacturing Co", amount: 110000, days: 28, status: "good" },
-  { name: "Healthcare Group", amount: 140000, days: 65, status: "overdue" },
+  { name: "Acme Corp", amount: 450000, days: 45, status: "at-risk", trend: -2.5 },
+  { name: "Tech Solutions", amount: 380000, days: 38, status: "good", trend: 1.2 },
+  { name: "Global Retail", amount: 520000, days: 52, status: "at-risk", trend: -3.1 },
+  { name: "Manufacturing Co", amount: 310000, days: 28, status: "good", trend: 2.8 },
+  { name: "Healthcare Group", amount: 280000, days: 65, status: "overdue", trend: -5.2 },
+];
+
+const dsoTrendData = [
+  { month: "Jan", dso: 38, target: 35 },
+  { month: "Feb", dso: 40, target: 35 },
+  { month: "Mar", dso: 42, target: 35 },
+  { month: "Apr", dso: 44, target: 35 },
+  { month: "May", dso: 43, target: 35 },
+  { month: "Jun", dso: 42, target: 35 },
 ];
 
 function ARForecastContent() {
   const { selectedCount } = useLocationFilterDisplay();
-  const [selectedTab, setSelectedTab] = useState("aging");
+  const [selectedTab, setSelectedTab] = useState("overview");
   const [hasData] = useState(true);
 
   const totalAR = arAgingData.reduce((sum, item) => sum + item.amount, 0);
   const overdue90Plus = arAgingData.find((item) => item.bucket === "90+")?.amount || 0;
-  const avgDSO = 42; // Days Sales Outstanding
+  const avgDSO = 42;
+  const targetDSO = 35;
+  const collectionEfficiency = 78.5;
+  const totalCustomers = arAgingData.reduce((sum, item) => sum + item.customers, 0);
 
   if (!hasData) {
     return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">AR Collections Forecast</h1>
-          <p className="text-muted-foreground mt-2">Analyze aging buckets, collection probability, and cash flow impact</p>
+      <DashboardLayout>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">AR Collections Forecast</h1>
+            <p className="text-muted-foreground mt-2">Analyze aging buckets, collection probability, and cash flow impact</p>
+          </div>
+          <EmptyState
+            title="No AR Data Available"
+            description="There is no accounts receivable data available for the selected location(s)."
+            icon="database"
+          />
         </div>
-        <EmptyState
-          title="No AR Data Available"
-          description="There is no accounts receivable data available for the selected location(s). Please check your data source or select different filters."
-          icon="database"
-        />
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">AR Collections Forecast</h1>
-          <p className="text-muted-foreground mt-2">
-            Analyze aging buckets, collection probability, and cash flow impact across {selectedCount} location(s)
-          </p>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header Section */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">AR Collections Forecast</h1>
+            <p className="text-muted-foreground mt-2">
+              Comprehensive analysis of aging buckets, collection probability, and cash flow impact across {selectedCount} location(s)
+            </p>
+          </div>
+          <ExportButtons filename="ar-forecast" title="AR Collections Forecast" />
         </div>
-      </div>
 
-      {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total AR Outstanding</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${(totalAR / 1000000).toFixed(2)}M</div>
-            <p className="text-xs text-muted-foreground mt-1">↑ 5.2% from last month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">90+ Days Overdue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">${(overdue90Plus / 1000).toFixed(0)}K</div>
-            <Badge className="mt-2 bg-red-100 text-red-800">High Risk</Badge>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Days Sales Outstanding</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{avgDSO} days</div>
-            <p className="text-xs text-muted-foreground mt-1">↓ 2 days improvement</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Collection Rate (0-30)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">92%</div>
-            <p className="text-xs text-muted-foreground mt-1">On track</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabs */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="aging">Aging Analysis</TabsTrigger>
-          <TabsTrigger value="forecast">Collections Forecast</TabsTrigger>
-          <TabsTrigger value="rates">Collection Rates</TabsTrigger>
-          <TabsTrigger value="customers">Top Customers</TabsTrigger>
-        </TabsList>
-
-        {/* Aging Analysis Tab */}
-        <TabsContent value="aging" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>AR Aging Analysis</CardTitle>
-              <CardDescription>Distribution of outstanding receivables by aging bucket</CardDescription>
+        {/* Key Metrics Grid */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          {/* Total AR Card */}
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">Total AR Outstanding</CardTitle>
+                <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {arAgingData.map((item) => (
-                  <div key={item.bucket} className="flex items-center gap-4">
-                    <div className="w-24">
-                      <span className="font-medium">{item.bucket} days</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="flex-1 bg-gray-200 rounded-full h-2">
+              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">${(totalAR / 1000000).toFixed(2)}M</div>
+              <div className="flex items-center gap-1 mt-2">
+                <TrendingUp className="w-4 h-4 text-red-500" />
+                <span className="text-xs text-red-600 dark:text-red-400">+5.2% from last month</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 90+ Days Overdue Card */}
+          <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 border-red-200 dark:border-red-800">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-red-900 dark:text-red-100">90+ Days Overdue</CardTitle>
+                <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-900 dark:text-red-100">${(overdue90Plus / 1000).toFixed(0)}K</div>
+              <Badge className="mt-2 bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200">High Risk</Badge>
+            </CardContent>
+          </Card>
+
+          {/* Avg DSO Card */}
+          <Card className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900 border-amber-200 dark:border-amber-800">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-amber-900 dark:text-amber-100">Avg DSO</CardTitle>
+                <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-amber-900 dark:text-amber-100">{avgDSO} days</div>
+              <div className="flex items-center gap-1 mt-2">
+                <span className="text-xs text-amber-600 dark:text-amber-400">Target: {targetDSO} days</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Collection Efficiency Card */}
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-green-900 dark:text-green-100">Collection Rate</CardTitle>
+                <Target className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-900 dark:text-green-100">{collectionEfficiency}%</div>
+              <div className="flex items-center gap-1 mt-2">
+                <TrendingUp className="w-4 h-4 text-green-500" />
+                <span className="text-xs text-green-600 dark:text-green-400">+2.1% improvement</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Total Customers Card */}
+          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100">Active Customers</CardTitle>
+                <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">{totalCustomers}</div>
+              <div className="flex items-center gap-1 mt-2">
+                <span className="text-xs text-purple-600 dark:text-purple-400">Accounts in AR</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tabs Section */}
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="aging">Aging Analysis</TabsTrigger>
+            <TabsTrigger value="forecast">Forecast</TabsTrigger>
+            <TabsTrigger value="customers">Top Customers</TabsTrigger>
+          </TabsList>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid gap-4 lg:grid-cols-2">
+              {/* Collection Rate by Bucket */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Collection Rate by Aging Bucket</CardTitle>
+                  <CardDescription>Percentage of invoices collected by days outstanding</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={collectionRateData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value }) => `${name}: ${value}%`}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {collectionRateData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => `${value}%`} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* DSO Trend */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Days Sales Outstanding Trend</CardTitle>
+                  <CardDescription>DSO vs Target over 6 months</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={dsoTrendData}>
+                      <defs>
+                        <linearGradient id="colorDSO" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Area type="monotone" dataKey="dso" stroke="#f59e0b" fillOpacity={1} fill="url(#colorDSO)" />
+                      <Line type="monotone" dataKey="target" stroke="#10b981" strokeDasharray="5 5" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Aging Analysis Tab */}
+          <TabsContent value="aging" className="space-y-4">
+            <div className="grid gap-4">
+              {/* Aging Buckets Detail */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>AR Aging Analysis</CardTitle>
+                  <CardDescription>Detailed breakdown of accounts receivable by aging bucket</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {arAgingData.map((bucket) => (
+                      <div key={bucket.bucket} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-24 font-medium">{bucket.bucket} Days</div>
+                            <div className="text-2xl font-bold">${((bucket.amount as number) / 1000).toFixed(0)}K</div>
+                            <Badge variant="outline">{bucket.percentage}%</Badge>
+                            <div className="flex items-center gap-1 ml-4">
+                              {bucket.trend > 0 ? (
+                                <ArrowUpRight className="w-4 h-4 text-red-500" />
+                              ) : (
+                                <ArrowDownRight className="w-4 h-4 text-green-500" />
+                              )}
+                              <span className={bucket.trend > 0 ? "text-red-600" : "text-green-600"}>
+                                {Math.abs(bucket.trend)}%
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-sm text-muted-foreground">{bucket.customers} customers</div>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div
-                            className={`h-full rounded-full ${
-                              item.bucket === "0-30"
+                            className={`h-2 rounded-full ${
+                              bucket.bucket === "0-30"
                                 ? "bg-green-500"
-                                : item.bucket === "31-60"
+                                : bucket.bucket === "31-60"
                                   ? "bg-blue-500"
-                                  : item.bucket === "61-90"
-                                    ? "bg-yellow-500"
+                                  : bucket.bucket === "61-90"
+                                    ? "bg-amber-500"
                                     : "bg-red-500"
                             }`}
-                            style={{ width: `${item.percentage}%` }}
-                          />
+                            style={{ width: `${bucket.percentage}%` }}
+                          ></div>
                         </div>
-                        <span className="text-sm font-medium w-12">{item.percentage}%</span>
                       </div>
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>${(item.amount / 1000).toFixed(0)}K</span>
-                        <span>{item.customers} customers</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Aging Summary Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Aging Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2 px-2">Bucket</th>
-                      <th className="text-right py-2 px-2">Amount</th>
-                      <th className="text-right py-2 px-2">% of Total</th>
-                      <th className="text-right py-2 px-2">Customers</th>
-                      <th className="text-right py-2 px-2">Avg Days</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {arAgingData.map((item) => (
-                      <tr key={item.bucket} className="border-b hover:bg-muted/50">
-                        <td className="py-2 px-2 font-medium">{item.bucket} days</td>
-                        <td className="text-right py-2 px-2">${(item.amount / 1000).toFixed(0)}K</td>
-                        <td className="text-right py-2 px-2">{item.percentage}%</td>
-                        <td className="text-right py-2 px-2">{item.customers}</td>
-                        <td className="text-right py-2 px-2">
-                          {item.bucket === "0-30"
-                            ? "15"
-                            : item.bucket === "31-60"
-                              ? "45"
-                              : item.bucket === "61-90"
-                                ? "75"
-                                : "120"}
-                        </td>
-                      </tr>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Collections Forecast Tab */}
-        <TabsContent value="forecast" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>6-Month Collections Forecast</CardTitle>
-              <CardDescription>Projected vs actual collections with confidence intervals</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={forecastData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value: any) => (value ? `$${(Number(value) / 1000).toFixed(0)}K` : "N/A")} />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="forecast"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
-                    name="Forecast"
-                    dot={{ fill: "#3b82f6" }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="actual"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    name="Actual"
-                    dot={{ fill: "#10b981" }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="collected"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
-                    name="Collected"
-                    dot={{ fill: "#8b5cf6" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Forecast Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Forecast Assumptions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-muted rounded">
-                <span className="text-sm">Base Collection Rate (0-30 days)</span>
-                <span className="font-medium">92%</span>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-muted rounded">
-                <span className="text-sm">Secondary Collection Rate (31-60 days)</span>
-                <span className="font-medium">78%</span>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-muted rounded">
-                <span className="text-sm">Tertiary Collection Rate (61-90 days)</span>
-                <span className="font-medium">45%</span>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-muted rounded">
-                <span className="text-sm">Write-off Rate (90+ days)</span>
-                <span className="font-medium">15%</span>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Collection Rates Tab */}
-        <TabsContent value="rates" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Collection Rates by Aging Bucket</CardTitle>
-              <CardDescription>Probability of collection within 30 days</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={collectionRateData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {collectionRateData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => `${value}%`} />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Collection Rate Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Collection Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {collectionRateData.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between p-3 border rounded">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }} />
-                      <span className="text-sm font-medium">{item.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-gray-200 rounded-full h-2">
-                        <div className="h-full rounded-full bg-blue-500" style={{ width: `${item.value}%` }} />
-                      </div>
-                      <span className="font-bold w-12 text-right">{item.value}%</span>
-                    </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                </CardContent>
+              </Card>
 
-        {/* Top Customers Tab */}
-        <TabsContent value="customers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Customers by AR Balance</CardTitle>
-              <CardDescription>Risk assessment and collection status</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {customerData.map((customer) => (
-                  <div key={customer.name} className="flex items-center justify-between p-3 border rounded hover:bg-muted/50">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium">{customer.name}</span>
-                        <Badge
-                          className={
-                            customer.status === "good"
-                              ? "bg-green-100 text-green-800"
-                              : customer.status === "at-risk"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
-                          }
-                        >
-                          {customer.status === "good" ? "Good" : customer.status === "at-risk" ? "At Risk" : "Overdue"}
-                        </Badge>
+              {/* Aging Distribution Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Aging Distribution</CardTitle>
+                  <CardDescription>Visual representation of AR distribution across aging buckets</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={arAgingData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="bucket" />
+                      <YAxis />
+                      <Tooltip formatter={(value: any) => `$${((value as number) / 1000).toFixed(0)}K`} />
+                      <Legend />
+                      <Bar dataKey="amount" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Forecast Tab */}
+          <TabsContent value="forecast" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>AR Forecast vs Actual</CardTitle>
+                <CardDescription>6-month forecast with actual and collected amounts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <ResponsiveContainer width="100%" height={350}>
+                    <LineChart data={forecastData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip formatter={(value: any) => (value ? `$${((value as number) / 1000000).toFixed(2)}M` : "N/A")} />
+                      <Legend />
+                      <Line type="monotone" dataKey="forecast" stroke="#3b82f6" strokeWidth={2} name="Forecast" />
+                      <Line type="monotone" dataKey="actual" stroke="#10b981" strokeWidth={2} name="Actual" />
+                      <Line type="monotone" dataKey="collected" stroke="#f59e0b" strokeWidth={2} name="Collected" />
+                    </LineChart>
+                  </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Top Customers Tab */}
+          <TabsContent value="customers" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Customers by AR Balance</CardTitle>
+                <CardDescription>Largest AR accounts and their collection status</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {customerData.map((customer, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex-1">
+                        <div className="font-semibold">{customer.name}</div>
+                        <div className="flex items-center gap-3 mt-1">
+                          <span className="text-sm text-muted-foreground">{customer.days} days outstanding</span>
+                          <Badge
+                            variant="outline"
+                            className={
+                              customer.status === "good"
+                                ? "bg-green-100 text-green-800"
+                                : customer.status === "at-risk"
+                                  ? "bg-amber-100 text-amber-800"
+                                  : "bg-red-100 text-red-800"
+                            }
+                          >
+                            {customer.status.toUpperCase()}
+                          </Badge>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">{customer.days} days outstanding</p>
+                      <div className="text-right">
+                        <div className="text-lg font-bold">${((customer.amount as number) / 1000).toFixed(0)}K</div>
+                        <div className="flex items-center gap-1 justify-end mt-1">
+                          {customer.trend < 0 ? (
+                            <ArrowDownRight className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <ArrowUpRight className="w-4 h-4 text-red-500" />
+                          )}
+                          <span className={customer.trend < 0 ? "text-green-600 text-sm" : "text-red-600 text-sm"}>
+                            {Math.abs(customer.trend)}%
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <div className="font-bold">${(customer.amount / 1000).toFixed(0)}K</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Risk Alert */}
-          <Card className="border-red-200 bg-red-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-900">
-                <AlertCircle className="h-5 w-5" />
-                Collections at Risk
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-red-800">
-              <p className="text-sm">
-                2 customers have invoices overdue beyond 60 days totaling $320K. Recommend immediate follow-up and potential escalation to collections.
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-}
-
-export default function ARForecast() {
-  return (
-    <DashboardLayout>
-      <ARForecastContent />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </DashboardLayout>
   );
 }
+
+export default ARForecastContent;
