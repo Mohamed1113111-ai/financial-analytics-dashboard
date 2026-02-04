@@ -64,9 +64,21 @@
 - [x] Create improvement scenario modeling (optimistic/conservative)
 - [x] Write and pass 22 unit tests for WC router
 
-## Phase 8: Data Visualization & Charting
-- [ ] Set up Recharts integration
-- [ ] Create reusable chart components
+## Phase 8: Location-Based Filtering & Multi-Location Analysis
+- [x] Create location filtering context and hooks (LocationContext.tsx, useLocationFilter.ts)
+- [x] Add location selector component to DashboardLayout (LocationSelector.tsx)
+- [x] Implement location comparison views (LocationComparison.tsx)
+- [x] Create location performance heatmaps (LocationHeatmap.tsx)
+- [x] Write location filtering unit tests (LocationContext.test.ts with 30 tests)
+- [ ] Update tRPC procedures to support location filtering
+- [ ] Update all dashboard pages with location filters
+- [ ] Add location-based data aggregation
+
+## Phase 9: Data Export & Reporting
+- [ ] Implement PDF export for financial statements
+- [ ] Implement Excel export for detailed data
+- [ ] Create report templates
+- [ ] Add scheduled report generation
 - [ ] Build line charts for trends
 - [ ] Build bar charts for comparisons
 - [ ] Build heatmaps for AR analysis

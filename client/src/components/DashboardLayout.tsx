@@ -1,4 +1,3 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -20,12 +19,15 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { useIsMobile } from "@/hooks/useMobile";
 import { BarChart3, CreditCard, DollarSign, LogOut, PanelLeft, PieChart, TrendingUp, Zap } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
+import { LocationProvider } from "@/contexts/LocationContext";
+import LocationSelector from "./LocationSelector";
 
 const menuItems = [
   { icon: BarChart3, label: "Dashboard", path: "/" },
@@ -89,17 +91,19 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": `${sidebarWidth}px`,
-        } as CSSProperties
-      }
-    >
-      <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
-        {children}
-      </DashboardLayoutContent>
-    </SidebarProvider>
+    <LocationProvider>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": `${sidebarWidth}px`,
+          } as CSSProperties
+        }
+      >
+        <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
+          {children}
+        </DashboardLayoutContent>
+      </SidebarProvider>
+    </LocationProvider>
   );
 }
 
@@ -250,6 +254,16 @@ function DashboardLayoutContent({
       </div>
 
       <SidebarInset>
+        {!isMobile && (
+          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+            <div className="flex items-center gap-3">
+              <span className="tracking-tight text-foreground font-semibold">
+                {activeMenuItem?.label ?? "Financial Analytics"}
+              </span>
+            </div>
+            <LocationSelector />
+          </div>
+        )}
         {isMobile && (
           <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
             <div className="flex items-center gap-2">
@@ -262,6 +276,7 @@ function DashboardLayoutContent({
                 </div>
               </div>
             </div>
+            <LocationSelector />
           </div>
         )}
         <main className="flex-1 p-4">{children}</main>
