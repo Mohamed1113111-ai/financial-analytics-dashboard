@@ -6,6 +6,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, L
 import { AlertCircle, TrendingUp, Users, Calendar } from "lucide-react";
 import { useLocationFilterDisplay } from "@/hooks/useLocationFilter";
 import DashboardLayout from "@/components/DashboardLayout";
+import { EmptyState, EmptyChart } from "@/components/EmptyState";
 
 // Mock data for AR aging
 const arAgingData = [
@@ -42,10 +43,27 @@ const customerData = [
 function ARForecastContent() {
   const { selectedCount } = useLocationFilterDisplay();
   const [selectedTab, setSelectedTab] = useState("aging");
+  const [hasData] = useState(true);
 
   const totalAR = arAgingData.reduce((sum, item) => sum + item.amount, 0);
   const overdue90Plus = arAgingData.find((item) => item.bucket === "90+")?.amount || 0;
   const avgDSO = 42; // Days Sales Outstanding
+
+  if (!hasData) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">AR Collections Forecast</h1>
+          <p className="text-muted-foreground mt-2">Analyze aging buckets, collection probability, and cash flow impact</p>
+        </div>
+        <EmptyState
+          title="No AR Data Available"
+          description="There is no accounts receivable data available for the selected location(s). Please check your data source or select different filters."
+          icon="database"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

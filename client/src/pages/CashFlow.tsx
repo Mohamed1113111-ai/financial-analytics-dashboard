@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState, EmptyChart } from "@/components/EmptyState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowDown, ArrowUp, TrendingDown, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 import {
