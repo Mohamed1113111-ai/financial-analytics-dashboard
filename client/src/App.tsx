@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import CashFlow from "./pages/CashFlow";
 import PLAnalysis from "./pages/PLAnalysis";
+import WorkingCapital from "./pages/WorkingCapital";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/cash-flow"} component={CashFlow} />
       <Route path={"/pl-analysis"} component={PLAnalysis} />
+      <Route path={"/working-capital"} component={WorkingCapital} />
       {/* Financial modules to be added */}
       {/* <Route path={"/ar-forecast"} component={ARForecast} /> */}
       {/* <Route path={"/working-capital"} component={WorkingCapital} /> */}

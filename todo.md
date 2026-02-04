@@ -54,13 +54,15 @@
 - [x] Write and pass 17 unit tests for P&L router
 
 ## Phase 7: Working Capital Analysis Module
-- [ ] Create working capital data model
-- [ ] Build WC calculation engine (DSO, DPO, DIO, CCC)
-- [ ] Create working capital dashboard UI
-- [ ] Build KPI scorecards
-- [ ] Implement trend analysis visualization
-- [ ] Add cash impact visualization
-- [ ] Create improvement scenario modeling
+- [x] Create working capital data model (database schema ready)
+- [x] Build WC calculation engine (engine ready, tested)
+- [x] Create tRPC procedures for WC metrics and scenario analysis (6 procedures)
+- [x] Create working capital dashboard UI with 4 tabs
+- [x] Build KPI scorecards for DSO, DPO, DIO, CCC with health status
+- [x] Implement trend analysis visualization with 3-month trends
+- [x] Add cash impact visualization and waterfall charts
+- [x] Create improvement scenario modeling (optimistic/conservative)
+- [x] Write and pass 22 unit tests for WC router
 
 ## Phase 8: Data Visualization & Charting
 - [ ] Set up Recharts integration
