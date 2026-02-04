@@ -186,3 +186,17 @@
 - [x] Add icon indicators for positive/negative trends (ArrowUpRight, ArrowDownRight, TrendingUp/Down)
 - [x] Implement responsive design for all dashboards (Grid layouts, mobile-friendly tabs)
 - [x] Add data export functionality to dashboards (ExportButtons component on all pages)
+
+
+## Phase 15: Collection Strategy Simulator
+- [x] Design collection strategy simulator architecture and data models (Strategy input schema, simulation results interface)
+- [x] Create tRPC procedures for strategy simulation (simulateStrategy, compareStrategies, getTemplates, getRecommendations)
+- [x] Build strategy input form with parameters (early payment discount, payment terms, collection intensity)
+- [x] Implement strategy comparison view showing before/after metrics (Baseline vs Projected metrics cards)
+- [x] Create strategy templates (Aggressive, Balanced, Conservative with predefined parameters)
+- [x] Add impact visualization (DSO reduction, cash flow improvement, AR aging changes)
+- [x] Build scenario comparison charts (multiple strategies side-by-side with ComposedChart)
+- [x] Add strategy recommendations based on current AR profile (Dynamic recommendations based on impact)
+- [x] Write unit tests for strategy simulation logic (18 tests covering all scenarios)
+- [x] Integrate simulator into AR Forecast dashboard as new tab (Strategy Simulator tab in ARForecast)
+- [x] Add strategy export and reporting functionality (Comparison view with strategy list management)

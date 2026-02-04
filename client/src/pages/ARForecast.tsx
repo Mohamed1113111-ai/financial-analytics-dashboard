@@ -36,6 +36,7 @@ import { useLocationFilterDisplay } from "@/hooks/useLocationFilter";
 import DashboardLayout from "@/components/DashboardLayout";
 import { EmptyState } from "@/components/EmptyState";
 import { ExportButtons } from "@/components/ExportButtons";
+import { CollectionStrategySimulator } from "@/components/CollectionStrategySimulator";
 
 // Mock data for AR aging
 const arAgingData = [
@@ -207,11 +208,12 @@ function ARForecastContent() {
 
         {/* Tabs Section */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="aging">Aging Analysis</TabsTrigger>
             <TabsTrigger value="forecast">Forecast</TabsTrigger>
             <TabsTrigger value="customers">Top Customers</TabsTrigger>
+            <TabsTrigger value="strategy">Strategy Simulator</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -369,6 +371,18 @@ function ARForecastContent() {
                   </ResponsiveContainer>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Strategy Simulator Tab */}
+          <TabsContent value="strategy" className="space-y-4">
+            <CollectionStrategySimulator
+              currentAging={{
+                "0-30": arAgingData[0].amount,
+                "31-60": arAgingData[1].amount,
+                "61-90": arAgingData[2].amount,
+                "90+": arAgingData[3].amount,
+              }}
+            />
           </TabsContent>
 
           {/* Top Customers Tab */}
