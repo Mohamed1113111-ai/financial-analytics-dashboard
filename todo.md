@@ -43,13 +43,15 @@
 - [x] Write and pass 11 unit tests for cash flow router
 
 ## Phase 6: P&L Statement Module
-- [ ] Create P&L data model
-- [ ] Build P&L calculation engine (revenue, COGS, expenses, margins)
-- [ ] Create P&L statement UI
-- [ ] Implement location comparison view
-- [ ] Build margin analysis charts
-- [ ] Add actual vs budget variance analysis
-- [ ] Implement YoY and MoM trend analysis
+- [x] Create P&L data model (database schema ready)
+- [x] Build P&L calculation engine (engine ready, tested)
+- [x] Create tRPC procedures for P&L statements and variance analysis (5 procedures)
+- [x] Create P&L statement UI page with 4 tabs
+- [x] Implement period-over-period comparison view with 3-month trends
+- [x] Build budget vs actual variance analysis with detailed tables
+- [x] Create P&L visualization charts (waterfall, variance, margin trends)
+- [x] Add location-based P&L filtering capability
+- [x] Write and pass 17 unit tests for P&L router
 
 ## Phase 7: Working Capital Analysis Module
 - [ ] Create working capital data model

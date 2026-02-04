@@ -6,15 +6,16 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import CashFlow from "./pages/CashFlow";
+import PLAnalysis from "./pages/PLAnalysis";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/cash-flow"} component={CashFlow} />
+      <Route path={"/pl-analysis"} component={PLAnalysis} />
       {/* Financial modules to be added */}
       {/* <Route path={"/ar-forecast"} component={ARForecast} /> */}
-      {/* <Route path={"/pl-analysis"} component={PLAnalysis} /> */}
       {/* <Route path={"/working-capital"} component={WorkingCapital} /> */}
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
