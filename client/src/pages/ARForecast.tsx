@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { AlertCircle, TrendingUp, Users, Calendar } from "lucide-react";
 import { useLocationFilterDisplay } from "@/hooks/useLocationFilter";
+import DashboardLayout from "@/components/DashboardLayout";
 
 // Mock data for AR aging
 const arAgingData = [
@@ -38,7 +39,7 @@ const customerData = [
   { name: "Healthcare Group", amount: 140000, days: 65, status: "overdue" },
 ];
 
-export default function ARForecast() {
+function ARForecastContent() {
   const { selectedCount } = useLocationFilterDisplay();
   const [selectedTab, setSelectedTab] = useState("aging");
 
@@ -375,5 +376,13 @@ export default function ARForecast() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export default function ARForecast() {
+  return (
+    <DashboardLayout>
+      <ARForecastContent />
+    </DashboardLayout>
   );
 }
