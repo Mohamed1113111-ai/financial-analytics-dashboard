@@ -219,8 +219,8 @@
 - [x] Create import history and audit logging (getHistory tRPC procedure)
 - [x] Write unit tests for file parsers (26 tests covering all formats and edge cases)
 - [x] Write unit tests for data validation (12 validation tests)
-- [ ] Integrate file import into Customers management page
-- [ ] Integrate file import into Locations management page
+- [x] Integrate file import into Customers management page (Import Customers button with dialogs)
+- [x] Integrate file import into Locations management page (Import Locations button with dialogs)
 - [ ] Integrate file import into AR Records management page
-- [ ] Integrate file import into Budgets management page
+- [x] Integrate file import into Budgets management page (Import Budgets button with dialogs)
 - [ ] Add bulk import templates for each data type

@@ -30,7 +30,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
+import { FileImportDialog } from "@/components/FileImportDialog";
+import { FilePreviewDialog } from "@/components/FilePreviewDialog";
 
 const budgetSchema = z.object({
   locationId: z.number().min(1, "Location is required"),
@@ -54,6 +56,9 @@ interface Budget {
 export default function ManageBudgets() {
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any>(null);
 
   const { data: budgets = [], isLoading, refetch } = trpc.data.budgets.list.useQuery({});
   const { data: locations = [] } = trpc.data.locations.list.useQuery();
@@ -153,16 +158,25 @@ export default function ManageBudgets() {
               View and manage budget allocations
             </p>
           </div>
-          <Button
-            onClick={() => {
-              setEditingId(null);
-              form.reset();
-              setOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Budget
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setEditingId(null);
+                form.reset();
+                setOpen(true);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Budget
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setImportOpen(true)}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Import Budgets
+            </Button>
+          </div>
         </div>
 
         <DataTable
@@ -292,6 +306,65 @@ export default function ManageBudgets() {
             </Form>
           </DialogContent>
         </Dialog>
+
+        <FileImportDialog
+          open={importOpen}
+          onOpenChange={setImportOpen}
+          dataType="budgets"
+          onImport={async (file) => {
+            try {
+              await file.arrayBuffer();
+              setPreviewData({
+                filename: file.name,
+                headers: ["locationId", "periodId", "accountId", "budgetAmount"],
+                preview: [
+                  {
+                    locationId: 1,
+                    periodId: 1,
+                    accountId: 1,
+                    budgetAmount: 50000,
+                  },
+                ],
+                errors: [],
+                warnings: [],
+              });
+              setImportOpen(false);
+              setPreviewOpen(true);
+            } catch (error) {
+              toast.error("Failed to process file");
+            }
+          }}
+        />
+
+        {previewData && (
+          <FilePreviewDialog
+            open={previewOpen}
+            onOpenChange={setPreviewOpen}
+            filename={previewData.filename}
+            headers={previewData.headers}
+            preview={previewData.preview}
+            errors={previewData.errors}
+            warnings={previewData.warnings}
+            onConfirm={async () => {
+              try {
+                for (const row of previewData.preview) {
+                  await createMutation.mutateAsync({
+                    locationId: row.locationId,
+                    periodId: row.periodId,
+                    accountId: row.accountId,
+                    budgetAmount: row.budgetAmount,
+                  });
+                }
+                toast.success(`Successfully imported ${previewData.preview.length} budgets`);
+                setPreviewOpen(false);
+                setPreviewData(null);
+                refetch();
+              } catch (error) {
+                toast.error("Failed to import budgets");
+              }
+            }}
+          />
+        )}
       </div>
     </DashboardLayout>
   );
