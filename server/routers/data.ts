@@ -8,6 +8,7 @@ import {
   budget,
 } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { requirePermission } from "../utils/rbac";
 
 export const dataRouter = router({
   // ===== CUSTOMERS =====
@@ -27,7 +28,8 @@ export const dataRouter = router({
           creditLimit: z.number().min(0).optional(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        requirePermission(ctx.user.role as any, "customers:create");
         const db = await getDb();
         if (!db) throw new Error("Database not available");
 
@@ -53,7 +55,8 @@ export const dataRouter = router({
           creditLimit: z.number().min(0).optional(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        requirePermission(ctx.user.role as any, "customers:update");
         const db = await getDb();
         if (!db) throw new Error("Database not available");
 
@@ -68,7 +71,8 @@ export const dataRouter = router({
 
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        requirePermission(ctx.user.role as any, "customers:delete");
         const db = await getDb();
         if (!db) throw new Error("Database not available");
 

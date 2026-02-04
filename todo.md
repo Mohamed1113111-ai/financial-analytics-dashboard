@@ -251,3 +251,24 @@
 - [x] Add Download Template (CSV) button to Budgets page
 - [x] Create import guide/documentation for each template (Instructions sheet in Excel templates)
 - [x] Test template downloads and format validation
+
+
+## Phase 18: Role-Based Access Control (RBAC)
+- [x] Design RBAC architecture with Admin and Viewer roles (UserRole enum, ROLE_PERMISSIONS map)
+- [x] Create permission checking utilities and middleware (rbac.ts with 8 permission functions)
+- [x] Add role validation to customer tRPC procedures (create, update, delete with requirePermission)
+- [ ] Add role validation to location tRPC procedures
+- [ ] Add role validation to AR Records tRPC procedures
+- [ ] Add role validation to budgets tRPC procedures
+- [x] Create frontend permission checks hook (usePermission.ts with isAdmin, hasPermission functions)
+- [x] Add usePermission hook to ManageCustomers page
+- [ ] Hide/disable edit buttons for Viewers
+- [ ] Hide/disable delete buttons for Viewers
+- [ ] Hide/disable import buttons for Viewers
+- [ ] Hide/disable export buttons for Viewers
+- [ ] Add role indicator to user profile/header
+- [ ] Show permission denied messages for restricted operations
+- [ ] Create admin-only pages/sections
+- [ ] Add role management interface for admins
+- [ ] Write unit tests for RBAC system (target: 15+ tests)
+- [ ] Test permission enforcement on all pages

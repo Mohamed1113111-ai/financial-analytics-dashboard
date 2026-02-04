@@ -30,11 +30,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Plus, Upload, Download } from "lucide-react";
+import { Plus, Upload, Download, Lock } from "lucide-react";
 import { exportToExcel, exportToCSV } from "@/utils/exportUtils";
 import { downloadExcelTemplate, downloadCSVTemplate } from "@/utils/templateGenerator";
 import { FileImportDialog } from "@/components/FileImportDialog";
 import { FilePreviewDialog } from "@/components/FilePreviewDialog";
+import { usePermission } from "@/hooks/usePermission";
 
 const customerSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -60,6 +61,8 @@ interface Customer {
 }
 
 export default function ManageCustomers() {
+  const { isAdmin } = usePermission();
+  const isAdminUser = isAdmin();
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [importOpen, setImportOpen] = useState(false);
