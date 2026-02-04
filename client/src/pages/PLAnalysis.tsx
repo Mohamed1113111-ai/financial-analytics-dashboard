@@ -18,6 +18,7 @@ import {
   Cell,
 } from "recharts";
 import { useState } from "react";
+import { ExportButtons } from "@/components/ExportButtons";
 
 // Mock data - in production this would come from tRPC
 const mockPLStatement = {
@@ -479,6 +480,9 @@ export default function PLAnalysis() {
             </Card>
           </TabsContent>
         </Tabs>
+      <div className="flex justify-end">
+        <ExportButtons title="P&L Statement" filename="P&L-Statement" />
+      </div>
       </div>
     </DashboardLayout>
   );

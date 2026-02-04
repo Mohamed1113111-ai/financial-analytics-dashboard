@@ -20,6 +20,7 @@ import {
   Cell,
 } from "recharts";
 import { useState } from "react";
+import { ExportButtons } from "@/components/ExportButtons";
 
 // Mock data - in production this would come from tRPC
 const mockKPIScorecard = {
@@ -477,6 +478,9 @@ export default function WorkingCapital() {
             </Card>
           </TabsContent>
         </Tabs>
+      <div className="flex justify-end">
+        <ExportButtons title="Working Capital Analysis" filename="Working-Capital-Analysis" />
+      </div>
       </div>
     </DashboardLayout>
   );

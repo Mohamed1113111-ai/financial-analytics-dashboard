@@ -7,6 +7,7 @@ import { AlertCircle, TrendingUp, Users, Calendar } from "lucide-react";
 import { useLocationFilterDisplay } from "@/hooks/useLocationFilter";
 import DashboardLayout from "@/components/DashboardLayout";
 import { EmptyState, EmptyChart } from "@/components/EmptyState";
+import { ExportButtons } from "@/components/ExportButtons";
 
 // Mock data for AR aging
 const arAgingData = [

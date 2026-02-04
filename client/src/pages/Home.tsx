@@ -1,276 +1,278 @@
-import DashboardLayout from "@/components/DashboardLayout";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowDown, ArrowUp, TrendingUp, DollarSign, CreditCard, PieChart, Zap } from "lucide-react";
-import { Link } from "wouter";
+import { Loader2, TrendingUp, TrendingDown, DollarSign, Zap, PieChart } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { useLocation } from "@/contexts/LocationContext";
 
-interface MetricCardProps {
-  title: string;
-  value: string;
-  change: number;
-  icon: React.ReactNode;
-  href: string;
-}
-
-function MetricCard({ title, value, change, icon, href }: MetricCardProps) {
-  const isPositive = change >= 0;
-
-  return (
-    <Link href={href}>
-      <a className="block">
-        <Card className="financial-card cursor-pointer">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{title}</CardTitle>
-            <div className="rounded-lg bg-accent/10 p-2 text-accent">{icon}</div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{value}</div>
-            <div className={`flex items-center gap-1 text-sm font-medium mt-2 ${
-              isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
-            }`}>
-              {isPositive ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
-              {Math.abs(change)}% from last period
-            </div>
-          </CardContent>
-        </Card>
-      </a>
-    </Link>
-  );
-}
-
+/**
+ * Financial Dashboard - Main landing page with KPI metrics
+ */
 export default function Home() {
-  return (
-    <DashboardLayout>
-      <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="section-title">Financial Dashboard</h1>
-          <p className="section-subtitle mt-2">
-            Real-time visibility into cash flow, profitability, and working capital across all locations
-          </p>
-        </div>
+  const { user, loading: authLoading } = useAuth();
+  const { selectedLocations } = useLocation();
 
-        {/* Key Metrics Grid */}
-        <div className="grid-responsive">
-          <MetricCard
-            title="Total AR Outstanding"
-            value="$2.45M"
-            change={8.2}
-            icon={<CreditCard className="h-5 w-5" />}
-            href="/ar-forecast"
-          />
-          <MetricCard
-            title="Monthly Cash Flow"
-            value="$890K"
-            change={12.5}
-            icon={<DollarSign className="h-5 w-5" />}
-            href="/cash-flow"
-          />
-          <MetricCard
-            title="Gross Margin"
-            value="42.3%"
-            change={-2.1}
-            icon={<PieChart className="h-5 w-5" />}
-            href="/pl-analysis"
-          />
-          <MetricCard
-            title="Cash Conversion Cycle"
-            value="45 days"
-            change={-5.3}
-            icon={<Zap className="h-5 w-5" />}
-            href="/working-capital"
-          />
-        </div>
+  // Fetch dashboard metrics from database
+  const { data: metrics, isLoading, error } = trpc.dashboard.metrics.useQuery(
+    {
+      locationIds: selectedLocations.length > 0 ? selectedLocations : undefined,
+    },
+    {
+      enabled: !!user,
+      refetchInterval: 30000, // Refresh every 30 seconds
+    }
+  );
 
-        {/* Quick Access Sections */}
-        <div className="grid-2col">
-          {/* AR Collections Status */}
-          <Card className="financial-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-accent" />
-                AR Collections Forecast
-              </CardTitle>
-              <CardDescription>
-                Next 30 days collection forecast by aging bucket
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">0-30 days</span>
-                  <span className="font-semibold">$1.2M (92%)</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: "92%" }}></div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">31-60 days</span>
-                  <span className="font-semibold">$680K (78%)</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-yellow-500 h-2 rounded-full" style={{ width: "78%" }}></div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">61-90 days</span>
-                  <span className="font-semibold">$420K (62%)</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-orange-500 h-2 rounded-full" style={{ width: "62%" }}></div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">90+ days</span>
-                  <span className="font-semibold">$150K (35%)</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-red-500 h-2 rounded-full" style={{ width: "35%" }}></div>
-                </div>
-              </div>
-              <Link href="/ar-forecast">
-                <a className="mt-4 inline-block text-sm font-medium text-accent hover:underline">
-                  View detailed forecast →
-                </a>
-              </Link>
-            </CardContent>
-          </Card>
+  // Format currency for display
+  const formatCurrency = (value: number) => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(2)}M`;
+    }
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(1)}K`;
+    }
+    return `$${value.toFixed(2)}`;
+  };
 
-          {/* Cash Flow Summary */}
-          <Card className="financial-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-accent" />
-                Cash Flow Summary
-              </CardTitle>
-              <CardDescription>
-                Current month operating and investing activities
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-border">
-                  <span className="text-sm font-medium">Operating Cash Flow</span>
-                  <span className="financial-value positive">+$750K</span>
-                </div>
-                <div className="flex items-center justify-between pb-3 border-b border-border">
-                  <span className="text-sm font-medium">Investing Activities</span>
-                  <span className="financial-value negative">-$200K</span>
-                </div>
-                <div className="flex items-center justify-between pb-3 border-b border-border">
-                  <span className="text-sm font-medium">Financing Activities</span>
-                  <span className="financial-value">-$50K</span>
-                </div>
-                <div className="flex items-center justify-between pt-2 font-bold">
-                  <span>Net Cash Flow</span>
-                  <span className="financial-value positive">+$500K</span>
-                </div>
-              </div>
-              <Link href="/cash-flow">
-                <a className="mt-4 inline-block text-sm font-medium text-accent hover:underline">
-                  View full statement →
-                </a>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
+  // Format percentage
+  const formatPercent = (value: number) => {
+    return `${(value * 100).toFixed(1)}%`;
+  };
 
-        {/* Location Performance */}
-        <Card className="financial-card">
-          <CardHeader>
-            <CardTitle>Location Performance</CardTitle>
-            <CardDescription>
-              Profitability and efficiency metrics by business unit
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="financial-table">
-                <thead>
-                  <tr>
-                    <th>Location</th>
-                    <th>Revenue</th>
-                    <th>Gross Margin</th>
-                    <th>DSO</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="font-medium">New York</td>
-                    <td className="financial-value">$1.2M</td>
-                    <td className="financial-value">44.2%</td>
-                    <td className="financial-value">38 days</td>
-                    <td>
-                      <span className="status-badge favorable">Excellent</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-medium">Los Angeles</td>
-                    <td className="financial-value">$980K</td>
-                    <td className="financial-value">41.8%</td>
-                    <td className="financial-value">42 days</td>
-                    <td>
-                      <span className="status-badge favorable">Good</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-medium">Chicago</td>
-                    <td className="financial-value">$750K</td>
-                    <td className="financial-value">39.5%</td>
-                    <td className="financial-value">48 days</td>
-                    <td>
-                      <span className="status-badge unfavorable">Needs Attention</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-medium">Boston</td>
-                    <td className="financial-value">$520K</td>
-                    <td className="financial-value">43.1%</td>
-                    <td className="financial-value">35 days</td>
-                    <td>
-                      <span className="status-badge favorable">Excellent</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <Link href="/pl-analysis">
-              <a className="mt-4 inline-block text-sm font-medium text-accent hover:underline">
-                View detailed P&L analysis →
-              </a>
-            </Link>
-          </CardContent>
-        </Card>
+  if (authLoading || isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
-        {/* Quick Stats */}
-        <div className="grid-3col">
-          <Card className="financial-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Current Ratio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">1.85</div>
-              <p className="text-xs text-muted-foreground mt-1">Healthy liquidity position</p>
-            </CardContent>
-          </Card>
-          <Card className="financial-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Quick Ratio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">1.42</div>
-              <p className="text-xs text-muted-foreground mt-1">Strong short-term solvency</p>
-            </CardContent>
-          </Card>
-          <Card className="financial-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Net Margin</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">18.5%</div>
-              <p className="text-xs text-muted-foreground mt-1">Profitability on track</p>
-            </CardContent>
-          </Card>
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <p className="text-red-600 font-semibold">Error loading dashboard</p>
+          <p className="text-sm text-gray-600">{error.message}</p>
         </div>
       </div>
-    </DashboardLayout>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-8 p-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Financial Dashboard</h1>
+        <p className="text-muted-foreground mt-2">
+          Real-time visibility into cash flow, profitability, and working capital across all locations
+        </p>
+      </div>
+
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total AR Outstanding */}
+        <Card className="border-l-4 border-l-blue-500">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Total AR Outstanding
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">
+              {formatCurrency(metrics?.totalAROutstanding || 0)}
+            </div>
+            <div className="flex items-center gap-1 mt-2">
+              {metrics && metrics.arChange >= 0 ? (
+                <TrendingUp className="h-4 w-4 text-green-600" />
+              ) : (
+                <TrendingDown className="h-4 w-4 text-red-600" />
+              )}
+              <span
+                className={`text-sm font-medium ${
+                  metrics && metrics.arChange >= 0 ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {metrics?.arChange || 0}% from last period
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Monthly Cash Flow */}
+        <Card className="border-l-4 border-l-green-500">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Monthly Cash Flow
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">
+              {formatCurrency(metrics?.monthlyCashFlow || 0)}
+            </div>
+            <div className="flex items-center gap-1 mt-2">
+              {metrics && metrics.cashFlowChange >= 0 ? (
+                <TrendingUp className="h-4 w-4 text-green-600" />
+              ) : (
+                <TrendingDown className="h-4 w-4 text-red-600" />
+              )}
+              <span
+                className={`text-sm font-medium ${
+                  metrics && metrics.cashFlowChange >= 0 ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {metrics?.cashFlowChange || 0}% from last period
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Gross Margin */}
+        <Card className="border-l-4 border-l-purple-500">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <PieChart className="h-4 w-4" />
+              Gross Margin
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">
+              {formatPercent(metrics?.grossMargin || 0)}
+            </div>
+            <div className="flex items-center gap-1 mt-2">
+              {metrics && metrics.marginChange <= 0 ? (
+                <TrendingUp className="h-4 w-4 text-green-600" />
+              ) : (
+                <TrendingDown className="h-4 w-4 text-red-600" />
+              )}
+              <span
+                className={`text-sm font-medium ${
+                  metrics && metrics.marginChange <= 0 ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {metrics?.marginChange || 0}% from last period
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Working Capital */}
+        <Card className="border-l-4 border-l-orange-500">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Working Capital
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">
+              {formatCurrency(metrics?.workingCapital || 0)}
+            </div>
+            <div className="flex items-center gap-1 mt-2">
+              {metrics && metrics.wcChange >= 0 ? (
+                <TrendingUp className="h-4 w-4 text-green-600" />
+              ) : (
+                <TrendingDown className="h-4 w-4 text-red-600" />
+              )}
+              <span
+                className={`text-sm font-medium ${
+                  metrics && metrics.wcChange >= 0 ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {metrics?.wcChange || 0}% from last period
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* AR Aging Breakdown */}
+      <Card>
+        <CardHeader>
+          <CardTitle>AR Aging Analysis</CardTitle>
+          <CardDescription>Distribution of accounts receivable by aging bucket</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {metrics?.arAging && Object.entries(metrics.arAging).map(([bucket, amount]) => (
+              <div key={bucket} className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4">
+                <div className="text-sm font-medium text-muted-foreground mb-2">{bucket} Days</div>
+                <div className="text-xl font-bold text-foreground">{formatCurrency(amount as number)}</div>
+                <div className="text-xs text-muted-foreground mt-2">
+                  {metrics.totalAROutstanding > 0
+                    ? `${(((amount as number) / metrics.totalAROutstanding) * 100).toFixed(1)}%`
+                    : "0%"}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Top Locations by AR */}
+      {metrics?.topLocations && metrics.topLocations.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Locations by AR Outstanding</CardTitle>
+            <CardDescription>Locations with highest accounts receivable balances</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {metrics.topLocations.map((location: any, idx: number) => (
+                <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div>
+                    <div className="font-medium text-foreground">Location {location.locationId}</div>
+                    <div className="text-sm text-muted-foreground">{location.daysOverdue} days average</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-foreground">{formatCurrency(location.arAmount)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg">AR Forecast</CardTitle>
+            <CardDescription>View collection forecasts and aging analysis</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full">
+              View Details
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg">Cash Flow</CardTitle>
+            <CardDescription>Analyze cash flow statements and scenarios</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full">
+              View Details
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-lg">P&L Analysis</CardTitle>
+            <CardDescription>Review profitability and variance analysis</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full">
+              View Details
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }

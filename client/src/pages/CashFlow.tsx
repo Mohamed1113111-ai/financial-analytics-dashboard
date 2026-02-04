@@ -17,6 +17,7 @@ import {
   ComposedChart,
 } from "recharts";
 import { useState } from "react";
+import { ExportButtons } from "@/components/ExportButtons";
 
 // Mock data - in production this would come from tRPC
 const mockWaterfallData = [
@@ -452,6 +453,9 @@ export default function CashFlow() {
             </Card>
           </TabsContent>
         </Tabs>
+      <div className="flex justify-end">
+        <ExportButtons title="Cash Flow Statement" filename="Cash-Flow-Statement" />
+      </div>
       </div>
     </DashboardLayout>
   );

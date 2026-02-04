@@ -102,9 +102,21 @@
 - [x] Create export buttons component (ExportButtons.tsx)
 - [x] Write unit tests for export functionality (export.test.ts with 11 tests)
 - [x] Integrate DateRangeProvider and DateRangePicker into DashboardLayout
-- [ ] Add export buttons to all dashboard pages
+- [x] Add export buttons to AR Forecast page (title="AR Forecast Report")
+- [x] Add export buttons to Cash Flow page (title="Cash Flow Statement")
+- [x] Add export buttons to P&L Analysis page (title="P&L Statement")
+- [x] Add export buttons to Working Capital page (title="Working Capital Analysis")
 - [ ] Update tRPC procedures to support date filtering
 - [ ] Create report templates for each statement type
+
+## Phase 12: Connect Dashboard to Real Database
+- [x] Create tRPC dashboard metrics procedure (4 procedures: metrics, arAgingSummary, cashFlowSummary, plSummary)
+- [x] Update Home page to fetch live data from database (displays real KPI metrics, AR aging, top locations)
+- [x] Implement location and date range filtering in queries
+- [x] Add loading states and error handling (Loader2 spinner, error messages)
+- [x] Create dashboard data refresh functionality (30-second auto-refresh)
+- [x] Write and pass 12 unit tests for dashboard procedures
+- [x] Verify all KPI metrics display real calculated data (Total AR, Cash Flow, Gross Margin, Working Capital)
 
 ## Phase 9: Export Functionality
 - [ ] Implement PDF export for financial reports

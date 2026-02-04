@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import DashboardLayout from "./components/DashboardLayout";
 import Home from "./pages/Home";
 import CashFlow from "./pages/CashFlow";
 import PLAnalysis from "./pages/PLAnalysis";
@@ -12,16 +13,18 @@ import ARForecast from "./pages/ARForecast";
 
 function Router() {
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/ar-forecast"} component={ARForecast} />
-      <Route path={"/cash-flow"} component={CashFlow} />
-      <Route path={"/pl-analysis"} component={PLAnalysis} />
-      <Route path={"/working-capital"} component={WorkingCapital} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <DashboardLayout>
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/ar-forecast"} component={ARForecast} />
+        <Route path={"/cash-flow"} component={CashFlow} />
+        <Route path={"/pl-analysis"} component={PLAnalysis} />
+        <Route path={"/working-capital"} component={WorkingCapital} />
+        <Route path={"/404"} component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
+      </Switch>
+    </DashboardLayout>
   );
 }
 
