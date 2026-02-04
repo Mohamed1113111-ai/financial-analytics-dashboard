@@ -14,12 +14,14 @@ import ManageCustomers from "./pages/ManageCustomers";
 import ManageLocations from "./pages/ManageLocations";
 import ManageARRecords from "./pages/ManageARRecords";
 import ManageBudgets from "./pages/ManageBudgets";
+import Alerts from "./pages/Alerts";
 
 function Router() {
   return (
     <DashboardLayout>
       <Switch>
         <Route path={"\\"} component={Home} />
+        <Route path={"/alerts"} component={Alerts} />
         <Route path={"/ar-forecast"} component={ARForecast} />
         <Route path={"/cash-flow"} component={CashFlow} />
         <Route path={"/pl-analysis"} component={PLAnalysis} />

@@ -152,3 +152,19 @@
 - [ ] Management summary page (1-page CFO view)
 - [ ] Real-time data refresh
 - [ ] Custom report builder
+
+## Phase 13: Real-Time Alerts Dashboard
+- [x] Design alert system architecture and data models
+- [x] Create alert severity levels (critical, warning, info)
+- [x] Build risk scoring algorithm for AR accounts (days overdue, amount, customer history)
+- [x] Create cash flow shortfall detection logic
+- [x] Create tRPC procedures for alert data and risk scoring (4 procedures: getAlerts, getARiskScore, getCashFlowRisk, getAlertSummary)
+- [x] Build alerts dashboard UI with alert cards and filters (Alerts.tsx page)
+- [x] Implement alert severity indicators and color coding (red/yellow/blue)
+- [x] Create alert details modal with action recommendations (expandable action items)
+- [x] Add alert filtering by type (AR High-Risk, Credit Limit, Cash Flow, Margin, Collection Risk)
+- [x] Add alert filtering by severity level (Critical, Warning, Info)
+- [x] Implement alert acknowledgment/dismiss functionality (dismiss button)
+- [x] Write unit tests for alert system (30 tests covering all scenarios)
+- [x] Integrate alerts into sidebar navigation (AlertCircle icon)
+- [x] Add alert badge counter to navigation (summary cards show counts)

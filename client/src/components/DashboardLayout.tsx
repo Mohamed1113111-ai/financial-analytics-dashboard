@@ -20,7 +20,7 @@ import {
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, CreditCard, DollarSign, LogOut, PanelLeft, PieChart, TrendingUp, Zap, Database } from "lucide-react";
+import { BarChart3, CreditCard, DollarSign, LogOut, PanelLeft, PieChart, TrendingUp, Zap, Database, AlertCircle } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
@@ -33,6 +33,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const menuItems = [
   { icon: BarChart3, label: "Dashboard", path: "/" },
+  { icon: AlertCircle, label: "Alerts", path: "/alerts" },
   { icon: TrendingUp, label: "AR Forecast", path: "/ar-forecast" },
   { icon: CreditCard, label: "Cash Flow", path: "/cash-flow" },
   { icon: PieChart, label: "P&L Analysis", path: "/pl-analysis" },
