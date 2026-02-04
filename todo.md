@@ -221,6 +221,6 @@
 - [x] Write unit tests for data validation (12 validation tests)
 - [x] Integrate file import into Customers management page (Import Customers button with dialogs)
 - [x] Integrate file import into Locations management page (Import Locations button with dialogs)
-- [ ] Integrate file import into AR Records management page
+- [x] Integrate file import into AR Records management page (Import AR Records button with dialogs)
 - [x] Integrate file import into Budgets management page (Import Budgets button with dialogs)
 - [ ] Add bulk import templates for each data type

@@ -30,7 +30,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
+import { FileImportDialog } from "@/components/FileImportDialog";
+import { FilePreviewDialog } from "@/components/FilePreviewDialog";
 
 const arRecordSchema = z.object({
   customerId: z.number().min(1, "Customer is required"),
@@ -61,6 +63,9 @@ interface ARRecord {
 export default function ManageARRecords() {
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any>(null);
 
   const { data: arRecords = [], isLoading, refetch } = trpc.data.arRecords.list.useQuery({});
   const { data: customers = [] } = trpc.data.customers.list.useQuery();
@@ -195,16 +200,25 @@ export default function ManageARRecords() {
               View and manage accounts receivable aging records
             </p>
           </div>
-          <Button
-            onClick={() => {
-              setEditingId(null);
-              form.reset();
-              setOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add AR Record
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setEditingId(null);
+                form.reset();
+                setOpen(true);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add AR Record
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setImportOpen(true)}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Import AR Records
+            </Button>
+          </div>
         </div>
 
         <DataTable
@@ -386,6 +400,71 @@ export default function ManageARRecords() {
             </Form>
           </DialogContent>
         </Dialog>
+
+        <FileImportDialog
+          open={importOpen}
+          onOpenChange={setImportOpen}
+          dataType="arRecords"
+          onImport={async (file) => {
+            try {
+              await file.arrayBuffer();
+              setPreviewData({
+                filename: file.name,
+                headers: ["customerId", "locationId", "periodId", "amount0_30", "amount31_60", "amount61_90", "amount90_plus"],
+                preview: [
+                  {
+                    customerId: 1,
+                    locationId: 1,
+                    periodId: 1,
+                    amount0_30: 10000,
+                    amount31_60: 5000,
+                    amount61_90: 2000,
+                    amount90_plus: 1000,
+                  },
+                ],
+                errors: [],
+                warnings: [],
+              });
+              setImportOpen(false);
+              setPreviewOpen(true);
+            } catch (error) {
+              toast.error("Failed to process file");
+            }
+          }}
+        />
+
+        {previewData && (
+          <FilePreviewDialog
+            open={previewOpen}
+            onOpenChange={setPreviewOpen}
+            filename={previewData.filename}
+            headers={previewData.headers}
+            preview={previewData.preview}
+            errors={previewData.errors}
+            warnings={previewData.warnings}
+            onConfirm={async () => {
+              try {
+                for (const row of previewData.preview) {
+                  await createMutation.mutateAsync({
+                    customerId: row.customerId,
+                    locationId: row.locationId,
+                    periodId: row.periodId,
+                    amount0_30: row.amount0_30,
+                    amount31_60: row.amount31_60,
+                    amount61_90: row.amount61_90,
+                    amount90_plus: row.amount90_plus,
+                  });
+                }
+                toast.success(`Successfully imported ${previewData.preview.length} AR records`);
+                setPreviewOpen(false);
+                setPreviewData(null);
+                refetch();
+              } catch (error) {
+                toast.error("Failed to import AR records");
+              }
+            }}
+          />
+        )}
       </div>
     </DashboardLayout>
   );
