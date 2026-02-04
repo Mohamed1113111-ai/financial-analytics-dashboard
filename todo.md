@@ -32,12 +32,15 @@
 - [ ] Implement location and customer filtering
 
 ## Phase 5: Cash Flow Statement Module
-- [ ] Create cash flow data model
-- [ ] Build cash flow calculation engine (operating, investing, financing)
-- [ ] Create cash flow statement UI
-- [ ] Build cash waterfall visualization
-- [ ] Implement monthly rolling forecast
-- [ ] Add scenario modeling (base, optimistic, conservative)
+- [x] Create cash flow data model (database schema ready)
+- [x] Build cash flow calculation engine (engine ready, tested)
+- [x] Create tRPC procedures for cash flow data (calculateStatement, getWaterfallData, stressTest, getRollingForecast)
+- [x] Create cash flow statement UI page with three tabs
+- [x] Build waterfall visualization with Recharts
+- [x] Implement monthly rolling forecast with growth and seasonality
+- [x] Build liquidity stress-testing scenarios (base, optimistic, conservative)
+- [x] Add scenario modeling with recommendations
+- [x] Write and pass 11 unit tests for cash flow router
 
 ## Phase 6: P&L Statement Module
 - [ ] Create P&L data model

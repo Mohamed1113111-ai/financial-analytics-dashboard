@@ -5,14 +5,15 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import CashFlow from "./pages/CashFlow";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      {/* Financial modules will be added here */}
+      <Route path={"/cash-flow"} component={CashFlow} />
+      {/* Financial modules to be added */}
       {/* <Route path={"/ar-forecast"} component={ARForecast} /> */}
-      {/* <Route path={"/cash-flow"} component={CashFlow} /> */}
       {/* <Route path={"/pl-analysis"} component={PLAnalysis} /> */}
       {/* <Route path={"/working-capital"} component={WorkingCapital} /> */}
       <Route path={"/404"} component={NotFound} />
