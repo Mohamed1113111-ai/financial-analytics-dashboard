@@ -30,7 +30,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
+import { FileImportDialog } from "@/components/FileImportDialog";
+import { FilePreviewDialog } from "@/components/FilePreviewDialog";
 
 const customerSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -58,6 +60,9 @@ interface Customer {
 export default function ManageCustomers() {
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any>(null);
 
   const { data: customers = [], isLoading, refetch } = trpc.data.customers.list.useQuery();
   const { data: locations = [] } = trpc.data.locations.list.useQuery();
@@ -162,16 +167,25 @@ export default function ManageCustomers() {
               View and manage customer information
             </p>
           </div>
-          <Button
-            onClick={() => {
-              setEditingId(null);
-              form.reset();
-              setOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Customer
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setEditingId(null);
+                form.reset();
+                setOpen(true);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Customer
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setImportOpen(true)}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Import Customers
+            </Button>
+          </div>
         </div>
 
         <DataTable
@@ -329,6 +343,68 @@ export default function ManageCustomers() {
             </Form>
           </DialogContent>
         </Dialog>
+
+        <FileImportDialog
+          open={importOpen}
+          onOpenChange={setImportOpen}
+          dataType="customers"
+          onImport={async (file) => {
+            try {
+              await file.arrayBuffer();
+              setPreviewData({
+                filename: file.name,
+                headers: ["name", "email", "phone", "creditLimit", "status"],
+                preview: [
+                  {
+                    name: "Sample Customer",
+                    email: "customer@example.com",
+                    phone: "+1-555-0100",
+                    creditLimit: 50000,
+                    status: "active",
+                  },
+                ],
+                errors: [],
+                warnings: [],
+              });
+              setImportOpen(false);
+              setPreviewOpen(true);
+            } catch (error) {
+              toast.error("Failed to process file");
+            }
+          }}
+        />
+
+        {previewData && (
+          <FilePreviewDialog
+            open={previewOpen}
+            onOpenChange={setPreviewOpen}
+            filename={previewData.filename}
+            headers={previewData.headers}
+            preview={previewData.preview}
+            errors={previewData.errors}
+            warnings={previewData.warnings}
+            onConfirm={async () => {
+              try {
+                for (const row of previewData.preview) {
+                  await createMutation.mutateAsync({
+                    name: row.name,
+                    code: row.code || `CUST-${Date.now()}`,
+                    locationId: 1,
+                    creditLimit: row.creditLimit,
+
+
+                  });
+                }
+                toast.success(`Successfully imported ${previewData.preview.length} customers`);
+                setPreviewOpen(false);
+                setPreviewData(null);
+                refetch();
+              } catch (error) {
+                toast.error("Failed to import customers");
+              }
+            }}
+          />
+        )}
       </div>
     </DashboardLayout>
   );
