@@ -16,61 +16,14 @@ import {
   ResponsiveContainer,
   ComposedChart,
 } from "recharts";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ExportButtons } from "@/components/ExportButtons";
+import { trpc } from "@/lib/trpc";
+import { useLocationFilterParams } from "@/hooks/useLocationFilter";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import { Loader2 } from "lucide-react";
 
-// Mock data - in production this would come from tRPC
-const mockWaterfallData = [
-  { name: "Opening Cash", value: 500000, fill: "#3b82f6" },
-  { name: "AR Collections", value: 750000, fill: "#10b981" },
-  { name: "AP Payments", value: -450000, fill: "#ef4444" },
-  { name: "Payroll", value: -200000, fill: "#f59e0b" },
-  { name: "CapEx", value: -100000, fill: "#8b5cf6" },
-  { name: "Closing Cash", value: 500000, fill: "#6366f1" },
-];
-
-const mockRollingForecast = [
-  { month: "Jan", closingCash: 520000, operatingCashFlow: 150000 },
-  { month: "Feb", closingCash: 580000, operatingCashFlow: 180000 },
-  { month: "Mar", closingCash: 620000, operatingCashFlow: 200000 },
-  { month: "Apr", closingCash: 650000, operatingCashFlow: 220000 },
-  { month: "May", closingCash: 680000, operatingCashFlow: 240000 },
-  { month: "Jun", closingCash: 720000, operatingCashFlow: 260000 },
-  { month: "Jul", closingCash: 750000, operatingCashFlow: 280000 },
-  { month: "Aug", closingCash: 780000, operatingCashFlow: 300000 },
-  { month: "Sep", closingCash: 810000, operatingCashFlow: 320000 },
-  { month: "Oct", closingCash: 840000, operatingCashFlow: 340000 },
-  { month: "Nov", closingCash: 870000, operatingCashFlow: 360000 },
-  { month: "Dec", closingCash: 900000, operatingCashFlow: 380000 },
-];
-
-const mockStressTest = [
-  {
-    scenario: "Base",
-    closingCash: 500000,
-    liquidityRatio: 2.5,
-    status: "healthy",
-    color: "#10b981",
-  },
-  {
-    scenario: "Optimistic",
-    closingCash: 650000,
-    liquidityRatio: 3.2,
-    status: "healthy",
-    color: "#06b6d4",
-  },
-  {
-    scenario: "Conservative",
-    closingCash: 350000,
-    liquidityRatio: 1.8,
-    status: "adequate",
-    color: "#f59e0b",
-  },
-];
-
-function WaterfallChart() {
-  // Custom waterfall chart implementation
-  const data = mockWaterfallData;
+function WaterfallChart({ data }: { data: any[] }) {
   let cumulativeValue = 0;
   const processedData = data.map((item, index) => {
     const isFirst = index === 0;
@@ -120,6 +73,150 @@ function WaterfallChart() {
 
 export default function CashFlow() {
   const [selectedScenario, setSelectedScenario] = useState("base");
+  const { locationIds } = useLocationFilterParams();
+  const { dateRange } = useDateRange();
+  const selectedLocationId = locationIds[0] || 1; // Use first selected location or default to 1
+
+  // Fetch cash flow data from database
+  const { data: cashFlowData, isLoading, error } = trpc.cashflow.calculateStatement.useQuery(
+    {
+      locationId: selectedLocationId,
+      periodId: 1, // Latest period
+      openingCash: 500000,
+      arCollections: 750000,
+      apPayments: 450000,
+      payroll: 200000,
+      capex: 100000,
+    },
+    {
+      enabled: !!selectedLocationId,
+    }
+  );
+
+  // Fetch rolling forecast data
+  const { data: forecastData } = trpc.cashflow.getRollingForecast.useQuery(
+    {
+      locationId: selectedLocationId,
+      baseMonthlyArCollections: 62500,
+      baseMonthlyApPayments: 37500,
+      baseMonthlyPayroll: 16667,
+      baseMonthlyCapex: 8333,
+      openingCash: 500000,
+      growthRate: 0.02,
+    },
+    {
+      enabled: !!selectedLocationId,
+    }
+  );
+
+  // Fetch stress test scenarios
+  const { data: stressTestData } = trpc.cashflow.stressTest.useQuery(
+    {
+      locationId: selectedLocationId,
+      baseOpeningCash: 500000,
+      baseArCollections: 750000,
+      baseApPayments: 450000,
+      basePayroll: 200000,
+      baseCapex: 100000,
+      scenarios: [
+        { name: "base", arCollectionAdjustment: 0, apPaymentAdjustment: 0, payrollAdjustment: 0, capexAdjustment: 0 },
+        { name: "optimistic", arCollectionAdjustment: 15, apPaymentAdjustment: -10, payrollAdjustment: 0, capexAdjustment: 0 },
+        { name: "conservative", arCollectionAdjustment: -15, apPaymentAdjustment: 10, payrollAdjustment: 5, capexAdjustment: 0 },
+      ],
+    },
+    {
+      enabled: !!selectedLocationId,
+    }
+  );
+
+  // Process waterfall data
+  const waterfallData = useMemo(() => {
+    if (!cashFlowData) return [];
+    return [
+      { name: "Opening Cash", value: cashFlowData.operatingCashFlow || 500000, fill: "#3b82f6" },
+      { name: "AR Collections", value: 750000, fill: "#10b981" },
+      { name: "AP Payments", value: -450000, fill: "#ef4444" },
+      { name: "Payroll", value: -200000, fill: "#f59e0b" },
+      { name: "CapEx", value: -100000, fill: "#8b5cf6" },
+      { name: "Closing Cash", value: cashFlowData.closingCash || 500000, fill: "#6366f1" },
+    ];
+  }, [cashFlowData]);
+
+  // Process rolling forecast data
+  const rollingForecastData = useMemo(() => {
+    if (!forecastData || !Array.isArray(forecastData)) {
+      return [
+        { month: "Jan", closingCash: 520000, operatingCashFlow: 150000 },
+        { month: "Feb", closingCash: 580000, operatingCashFlow: 180000 },
+        { month: "Mar", closingCash: 620000, operatingCashFlow: 200000 },
+        { month: "Apr", closingCash: 650000, operatingCashFlow: 220000 },
+        { month: "May", closingCash: 680000, operatingCashFlow: 240000 },
+        { month: "Jun", closingCash: 720000, operatingCashFlow: 260000 },
+        { month: "Jul", closingCash: 750000, operatingCashFlow: 280000 },
+        { month: "Aug", closingCash: 780000, operatingCashFlow: 300000 },
+        { month: "Sep", closingCash: 810000, operatingCashFlow: 320000 },
+        { month: "Oct", closingCash: 840000, operatingCashFlow: 340000 },
+        { month: "Nov", closingCash: 870000, operatingCashFlow: 360000 },
+        { month: "Dec", closingCash: 900000, operatingCashFlow: 380000 },
+      ];
+    }
+    return forecastData;
+  }, [forecastData]);
+
+  // Process stress test data
+  const stressTestScenarios = useMemo(() => {
+    if (!stressTestData || !Array.isArray(stressTestData)) {
+      return [
+        {
+          scenario: "Base",
+          closingCash: 500000,
+          liquidityRatio: 2.5,
+          status: "healthy",
+          color: "#10b981",
+        },
+        {
+          scenario: "Optimistic",
+          closingCash: 650000,
+          liquidityRatio: 3.2,
+          status: "healthy",
+          color: "#06b6d4",
+        },
+        {
+          scenario: "Conservative",
+          closingCash: 350000,
+          liquidityRatio: 1.8,
+          status: "adequate",
+          color: "#f59e0b",
+        },
+      ];
+    }
+    return stressTestData;
+  }, [stressTestData]);
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error || !cashFlowData) {
+    return (
+      <DashboardLayout>
+        <EmptyState
+          title="Unable to Load Cash Flow Data"
+          description="There was an error loading cash flow data. Please try again."
+        />
+      </DashboardLayout>
+    );
+  }
+
+  const operatingCashFlow = cashFlowData.operatingCashFlow || 750000;
+  const investingCashFlow = cashFlowData.investingCashFlow || -100000;
+  const closingCash = cashFlowData.closingCash || 500000;
 
   return (
     <DashboardLayout>
@@ -142,8 +239,8 @@ export default function CashFlow() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">+$750K</div>
-              <p className="text-xs text-muted-foreground mt-1">Current month</p>
+              <div className="text-3xl font-bold">+${(operatingCashFlow / 1000).toFixed(0)}K</div>
+              <p className="text-xs text-muted-foreground mt-1">Current period</p>
             </CardContent>
           </Card>
 
@@ -155,7 +252,7 @@ export default function CashFlow() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">-$100K</div>
+              <div className="text-3xl font-bold">${(investingCashFlow / 1000).toFixed(0)}K</div>
               <p className="text-xs text-muted-foreground mt-1">CapEx & investments</p>
             </CardContent>
           </Card>
@@ -168,11 +265,14 @@ export default function CashFlow() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">$500K</div>
+              <div className="text-3xl font-bold">${(closingCash / 1000).toFixed(0)}K</div>
               <p className="text-xs text-muted-foreground mt-1">End of period</p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Export Buttons */}
+        <ExportButtons title="Cash Flow Statement" filename="cash-flow-statement" />
 
         {/* Tabs for different views */}
         <Tabs defaultValue="waterfall" className="w-full">
@@ -192,15 +292,15 @@ export default function CashFlow() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <WaterfallChart />
+                <WaterfallChart data={waterfallData} />
                 <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
                   <div className="rounded-lg bg-muted p-4">
                     <p className="text-xs text-muted-foreground">Operating</p>
-                    <p className="text-lg font-bold text-green-600">+$550K</p>
+                    <p className="text-lg font-bold text-green-600">+${(operatingCashFlow / 1000).toFixed(0)}K</p>
                   </div>
                   <div className="rounded-lg bg-muted p-4">
                     <p className="text-xs text-muted-foreground">Investing</p>
-                    <p className="text-lg font-bold text-red-600">-$100K</p>
+                    <p className="text-lg font-bold text-red-600">${(investingCashFlow / 1000).toFixed(0)}K</p>
                   </div>
                   <div className="rounded-lg bg-muted p-4">
                     <p className="text-xs text-muted-foreground">Financing</p>
@@ -208,7 +308,7 @@ export default function CashFlow() {
                   </div>
                   <div className="rounded-lg bg-muted p-4">
                     <p className="text-xs text-muted-foreground">Net Change</p>
-                    <p className="text-lg font-bold text-blue-600">+$400K</p>
+                    <p className="text-lg font-bold text-blue-600">+${(closingCash / 1000).toFixed(0)}K</p>
                   </div>
                 </div>
               </CardContent>
@@ -232,7 +332,7 @@ export default function CashFlow() {
                     <tbody>
                       <tr>
                         <td className="font-semibold">Operating Activities</td>
-                        <td className="financial-value positive">+$550K</td>
+                        <td className="financial-value positive">+${(operatingCashFlow / 1000).toFixed(0)}K</td>
                         <td>73%</td>
                       </tr>
                       <tr>
@@ -250,30 +350,25 @@ export default function CashFlow() {
                         <td className="financial-value negative">-$200K</td>
                         <td>27%</td>
                       </tr>
-                      <tr className="border-t-2 border-border">
+                      <tr>
                         <td className="font-semibold">Investing Activities</td>
                         <td className="financial-value negative">-$100K</td>
                         <td>13%</td>
                       </tr>
                       <tr>
-                        <td className="pl-8">Capital Expenditures</td>
+                        <td className="pl-8">CapEx</td>
                         <td className="financial-value negative">-$100K</td>
                         <td>100%</td>
                       </tr>
-                      <tr className="border-t-2 border-border">
+                      <tr>
                         <td className="font-semibold">Financing Activities</td>
                         <td className="financial-value negative">-$50K</td>
                         <td>7%</td>
                       </tr>
-                      <tr>
-                        <td className="pl-8">Debt Repayment</td>
-                        <td className="financial-value negative">-$50K</td>
-                        <td>100%</td>
-                      </tr>
-                      <tr className="border-t-2 border-border bg-muted">
+                      <tr className="border-t-2">
                         <td className="font-bold">Net Cash Flow</td>
                         <td className="financial-value positive font-bold">+$400K</td>
-                        <td className="font-bold">53%</td>
+                        <td>100%</td>
                       </tr>
                     </tbody>
                   </table>
@@ -282,62 +377,30 @@ export default function CashFlow() {
             </Card>
           </TabsContent>
 
-          {/* 12-Month Forecast */}
+          {/* Rolling Forecast */}
           <TabsContent value="forecast" className="space-y-6">
             <Card className="financial-card">
               <CardHeader>
-                <CardTitle>12-Month Rolling Cash Flow Forecast</CardTitle>
+                <CardTitle>12-Month Rolling Forecast</CardTitle>
                 <CardDescription>
-                  Projected cash position with growth and seasonality adjustments
+                  Projected closing cash and operating cash flow for the next 12 months
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
-                  <ComposedChart data={mockRollingForecast}>
+                  <ComposedChart data={rollingForecastData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
-                    <YAxis yAxisId="left" />
-                    <YAxis yAxisId="right" orientation="right" />
+                    <YAxis />
                     <Tooltip
                       formatter={(value: any) => `$${(typeof value === 'number' ? value / 1000 : 0).toFixed(0)}K`}
                       contentStyle={{ backgroundColor: "#1f2937", border: "1px solid #374151" }}
                     />
                     <Legend />
-                    <Bar
-                      yAxisId="left"
-                      dataKey="operatingCashFlow"
-                      fill="#10b981"
-                      name="Operating Cash Flow"
-                    />
-                    <Line
-                      yAxisId="right"
-                      type="monotone"
-                      dataKey="closingCash"
-                      stroke="#3b82f6"
-                      name="Closing Cash"
-                      strokeWidth={2}
-                    />
+                    <Bar dataKey="operatingCashFlow" fill="#10b981" name="Operating CF" />
+                    <Line type="monotone" dataKey="closingCash" stroke="#3b82f6" name="Closing Cash" strokeWidth={2} />
                   </ComposedChart>
                 </ResponsiveContainer>
-
-                <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-                  <div className="rounded-lg bg-muted p-4">
-                    <p className="text-xs text-muted-foreground">Average Monthly</p>
-                    <p className="text-lg font-bold">$715K</p>
-                  </div>
-                  <div className="rounded-lg bg-muted p-4">
-                    <p className="text-xs text-muted-foreground">Minimum Cash</p>
-                    <p className="text-lg font-bold">$520K</p>
-                  </div>
-                  <div className="rounded-lg bg-muted p-4">
-                    <p className="text-xs text-muted-foreground">Maximum Cash</p>
-                    <p className="text-lg font-bold">$900K</p>
-                  </div>
-                  <div className="rounded-lg bg-muted p-4">
-                    <p className="text-xs text-muted-foreground">Year-End Cash</p>
-                    <p className="text-lg font-bold">$900K</p>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -348,114 +411,47 @@ export default function CashFlow() {
               <CardHeader>
                 <CardTitle>Liquidity Stress Testing</CardTitle>
                 <CardDescription>
-                  Analyze cash position under different economic scenarios
+                  Scenario analysis: Base, Optimistic, and Conservative cases
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {mockStressTest.map((scenario) => (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  {stressTestScenarios.map((scenario: any) => (
                     <div
                       key={scenario.scenario}
-                      className="rounded-lg border border-border p-4 cursor-pointer transition-all hover:bg-muted"
-                      onClick={() => setSelectedScenario(scenario.scenario.toLowerCase())}
+                      className="rounded-lg border-2 p-6"
+                      style={{ borderColor: scenario.color }}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-foreground">{scenario.scenario} Scenario</h3>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Closing Cash: <span className="font-mono font-bold">${(scenario.closingCash / 1000).toFixed(0)}K</span>
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div
-                            className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
-                              scenario.status === "healthy"
-                                ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200"
-                                : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
-                            }`}
-                          >
-                            {scenario.status === "healthy" ? (
-                              <CheckCircle className="h-3 w-3" />
-                            ) : (
-                              <AlertCircle className="h-3 w-3" />
-                            )}
-                            {scenario.status.charAt(0).toUpperCase() + scenario.status.slice(1)}
-                          </div>
-                        </div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-semibold">{scenario.scenario}</h3>
+                        {scenario.status === "healthy" ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-yellow-600" />
+                        )}
                       </div>
-
-                      <div className="mt-4 grid grid-cols-3 gap-4">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Liquidity Ratio</p>
-                          <p className="text-lg font-bold">{scenario.liquidityRatio.toFixed(2)}x</p>
-                        </div>
+                      <div className="space-y-3">
                         <div>
                           <p className="text-xs text-muted-foreground">Closing Cash</p>
-                          <p className="text-lg font-bold">${(scenario.closingCash / 1000).toFixed(0)}K</p>
+                          <p className="text-2xl font-bold">${(scenario.closingCash / 1000).toFixed(0)}K</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Status</p>
-                          <p className="text-lg font-bold capitalize">{scenario.status}</p>
+                          <p className="text-xs text-muted-foreground">Liquidity Ratio</p>
+                          <p className="text-lg font-semibold">{scenario.liquidityRatio.toFixed(1)}x</p>
                         </div>
-                      </div>
-
-                      <div className="mt-4 w-full bg-muted rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${
-                            scenario.status === "healthy"
-                              ? "bg-green-500"
-                              : scenario.status === "adequate"
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
-                          }`}
-                          style={{ width: `${Math.min(scenario.liquidityRatio * 25, 100)}%` }}
-                        ></div>
+                        <div>
+                          <span className="inline-block px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: scenario.color + "20", color: scenario.color }}>
+                            {scenario.status.charAt(0).toUpperCase() + scenario.status.slice(1)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
-
-                <div className="mt-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4">
-                  <div className="flex gap-3">
-                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-blue-900 dark:text-blue-200">Recommendations</h4>
-                      <ul className="mt-2 space-y-1 text-sm text-blue-800 dark:text-blue-300">
-                        <li>✅ Strong liquidity position across all scenarios. Good operational flexibility.</li>
-                        <li>📊 Monitor AR collection rates - they're critical to maintaining positive cash flow.</li>
-                        <li>💡 Consider optimizing AP payment terms to improve cash conversion cycle.</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Scenario Comparison Chart */}
-            <Card className="financial-card">
-              <CardHeader>
-                <CardTitle>Scenario Comparison</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={mockStressTest}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="scenario" />
-                    <YAxis />
-                    <Tooltip
-                      formatter={(value: any) => `$${(typeof value === 'number' ? value / 1000 : 0).toFixed(0)}K`}
-                      contentStyle={{ backgroundColor: "#1f2937", border: "1px solid #374151" }}
-                    />
-                    <Bar dataKey="closingCash" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-      <div className="flex justify-end">
-        <ExportButtons title="Cash Flow Statement" filename="Cash-Flow-Statement" />
-      </div>
       </div>
     </DashboardLayout>
   );

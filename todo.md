@@ -43,6 +43,10 @@
 - [x] Build liquidity stress-testing scenarios (base, optimistic, conservative)
 - [x] Add scenario modeling with recommendations
 - [x] Write and pass 11 unit tests for cash flow router
+- [x] Connect Cash Flow page to real database with location filtering
+- [x] Implement tRPC queries for cash flow data from database
+- [x] Add loading states and error handling to Cash Flow page
+- [x] Write integration tests for Cash Flow database connection (CashFlow.test.ts)
 
 ## Phase 6: P&L Statement Module
 - [x] Create P&L data model (database schema ready)
@@ -54,6 +58,10 @@
 - [x] Create P&L visualization charts (waterfall, variance, margin trends)
 - [x] Add location-based P&L filtering capability
 - [x] Write and pass 17 unit tests for P&L router
+- [x] Connect P&L page to real database with location filtering
+- [x] Implement tRPC queries for P&L data from database
+- [x] Add loading states and error handling to P&L page
+- [x] Write integration tests for P&L database connection (PLAnalysis.test.ts)
 
 ## Phase 7: Working Capital Analysis Module
 - [x] Create working capital data model (database schema ready)

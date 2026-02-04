@@ -312,3 +312,118 @@ export async function getCustomersByLocation(locationId: number) {
     .from(customers)
     .where(and(eq(customers.locationId, locationId), eq(customers.status, "active")));
 }
+
+// ============================================================================
+// Cash Flow Data Queries
+// ============================================================================
+
+export async function getCashFlowDataByLocationAndPeriod(locationId: number, periodId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get AR collections from arAging
+  const arData = await db
+    .select()
+    .from(arAging)
+    .where(and(eq(arAging.locationId, locationId), eq(arAging.periodId, periodId)));
+
+  const totalAR = arData.reduce((sum, row) => sum + Number(row.totalAR), 0);
+
+  // Get transactions for operating and investing cash flows
+  const transactions_data = await db
+    .select()
+    .from(transactions)
+    .where(and(eq(transactions.locationId, locationId), eq(transactions.periodId, periodId)));
+
+  // Get budget for forecast data
+  const budgetData = await db
+    .select()
+    .from(budget)
+    .where(and(eq(budget.locationId, locationId), eq(budget.periodId, periodId)));
+
+  return {
+    arCollections: totalAR,
+    transactions: transactions_data,
+    budget: budgetData,
+  };
+}
+
+export async function getCashFlowStatementsByLocationAndPeriodRange(
+  locationId: number,
+  startPeriodId: number,
+  endPeriodId: number
+) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db
+    .select()
+    .from(cashFlowStatement)
+    .where(
+      and(
+        eq(cashFlowStatement.locationId, locationId),
+        gte(cashFlowStatement.periodId, startPeriodId),
+        lte(cashFlowStatement.periodId, endPeriodId)
+      )
+    )
+    .orderBy(desc(cashFlowStatement.periodId));
+}
+
+// ============================================================================
+// P&L Data Queries
+// ============================================================================
+
+export async function getPLDataByLocationAndPeriod(locationId: number, periodId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get cached P&L statement
+  const plData = await db
+    .select()
+    .from(plStatement)
+    .where(and(eq(plStatement.locationId, locationId), eq(plStatement.periodId, periodId)))
+    .limit(1);
+
+  if (plData.length === 0) return null;
+
+  // Get budget comparison data
+  const budgetData = await db
+    .select()
+    .from(budget)
+    .where(and(eq(budget.locationId, locationId), eq(budget.periodId, periodId)));
+
+  return {
+    statement: plData[0],
+    budget: budgetData,
+  };
+}
+
+export async function getPLStatementsByLocationAndPeriodRange(
+  locationId: number,
+  startPeriodId: number,
+  endPeriodId: number
+) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db
+    .select()
+    .from(plStatement)
+    .where(
+      and(
+        eq(plStatement.locationId, locationId),
+        gte(plStatement.periodId, startPeriodId),
+        lte(plStatement.periodId, endPeriodId)
+      )
+    )
+    .orderBy(desc(plStatement.periodId));
+}
+
+export async function getPLStatementsByLocation(locationId: number, limit: number = 12) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db
+    .select()
+    .from(plStatement)
+    .where(eq(plStatement.locationId, locationId))
+    .orderBy(desc(plStatement.periodId))
+    .limit(limit);
+}
