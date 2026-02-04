@@ -8,17 +8,16 @@ import Home from "./pages/Home";
 import CashFlow from "./pages/CashFlow";
 import PLAnalysis from "./pages/PLAnalysis";
 import WorkingCapital from "./pages/WorkingCapital";
+import ARForecast from "./pages/ARForecast";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/ar-forecast"} component={ARForecast} />
       <Route path={"/cash-flow"} component={CashFlow} />
       <Route path={"/pl-analysis"} component={PLAnalysis} />
       <Route path={"/working-capital"} component={WorkingCapital} />
-      {/* Financial modules to be added */}
-      {/* <Route path={"/ar-forecast"} component={ARForecast} /> */}
-      {/* <Route path={"/working-capital"} component={WorkingCapital} /> */}
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
