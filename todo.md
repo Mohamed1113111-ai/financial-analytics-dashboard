@@ -94,16 +94,17 @@
 - [ ] Build Locations management page with add/edit/delete forms
 - [ ] Create data management navigation in sidebar
 
-## Phase 11: Data Export & Reporting
-- [ ] Implement PDF export for financial statements
-- [ ] Implement Excel export for detailed data
-- [ ] Create report templates
-- [ ] Add scheduled report generation
-- [ ] Build line charts for trends
-- [ ] Build bar charts for comparisons
-- [ ] Build heatmaps for AR analysis
-- [ ] Build waterfall charts for cash flow
-- [ ] Implement interactive filters and drill-down
+## Phase 11: Data Export & Date Filtering
+- [x] Create date range filtering context and hooks (DateRangeContext.tsx)
+- [x] Add date picker component to dashboard header (DateRangePicker.tsx)
+- [x] Implement PDF export helper functions (export.ts with html2canvas + jsPDF)
+- [x] Implement Excel export helper functions (export.ts with xlsx)
+- [x] Create export buttons component (ExportButtons.tsx)
+- [x] Write unit tests for export functionality (export.test.ts with 11 tests)
+- [x] Integrate DateRangeProvider and DateRangePicker into DashboardLayout
+- [ ] Add export buttons to all dashboard pages
+- [ ] Update tRPC procedures to support date filtering
+- [ ] Create report templates for each statement type
 
 ## Phase 9: Export Functionality
 - [ ] Implement PDF export for financial reports

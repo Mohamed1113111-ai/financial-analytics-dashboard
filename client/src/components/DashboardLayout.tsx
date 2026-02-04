@@ -28,6 +28,8 @@ import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { LocationProvider } from "@/contexts/LocationContext";
 import LocationSelector from "./LocationSelector";
+import { DateRangeProvider } from "@/contexts/DateRangeContext";
+import { DateRangePicker } from "@/components/DateRangePicker";
 
 const menuItems = [
   { icon: BarChart3, label: "Dashboard", path: "/" },
@@ -91,8 +93,9 @@ export default function DashboardLayout({
   }
 
   return (
-    <LocationProvider>
-      <SidebarProvider
+    <DateRangeProvider>
+      <LocationProvider>
+        <SidebarProvider
         style={
           {
             "--sidebar-width": `${sidebarWidth}px`,
@@ -102,8 +105,9 @@ export default function DashboardLayout({
         <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
           {children}
         </DashboardLayoutContent>
-      </SidebarProvider>
-    </LocationProvider>
+        </SidebarProvider>
+      </LocationProvider>
+    </DateRangeProvider>
   );
 }
 
@@ -262,7 +266,10 @@ function DashboardLayoutContent({
                 {activeMenuItem?.label ?? "Financial Analytics"}
               </span>
             </div>
-            <LocationSelector />
+            <div className="flex items-center gap-2">
+              <DateRangePicker />
+              <LocationSelector />
+            </div>
           </div>
         )}
         {isMobile && (
