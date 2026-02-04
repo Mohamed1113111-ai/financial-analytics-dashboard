@@ -10,16 +10,24 @@ import CashFlow from "./pages/CashFlow";
 import PLAnalysis from "./pages/PLAnalysis";
 import WorkingCapital from "./pages/WorkingCapital";
 import ARForecast from "./pages/ARForecast";
+import ManageCustomers from "./pages/ManageCustomers";
+import ManageLocations from "./pages/ManageLocations";
+import ManageARRecords from "./pages/ManageARRecords";
+import ManageBudgets from "./pages/ManageBudgets";
 
 function Router() {
   return (
     <DashboardLayout>
       <Switch>
-        <Route path={"/"} component={Home} />
+        <Route path={"\\"} component={Home} />
         <Route path={"/ar-forecast"} component={ARForecast} />
         <Route path={"/cash-flow"} component={CashFlow} />
         <Route path={"/pl-analysis"} component={PLAnalysis} />
         <Route path={"/working-capital"} component={WorkingCapital} />
+        <Route path={"/manage-customers"} component={ManageCustomers} />
+        <Route path={"/manage-locations"} component={ManageLocations} />
+        <Route path={"/manage-ar-records"} component={ManageARRecords} />
+        <Route path={"/manage-budgets"} component={ManageBudgets} />
         <Route path={"/404"} component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />

@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +20,7 @@ import {
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, CreditCard, DollarSign, LogOut, PanelLeft, PieChart, TrendingUp, Zap } from "lucide-react";
+import { BarChart3, CreditCard, DollarSign, LogOut, PanelLeft, PieChart, TrendingUp, Zap, Database } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
@@ -30,6 +29,7 @@ import { LocationProvider } from "@/contexts/LocationContext";
 import LocationSelector from "./LocationSelector";
 import { DateRangeProvider } from "@/contexts/DateRangeContext";
 import { DateRangePicker } from "@/components/DateRangePicker";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const menuItems = [
   { icon: BarChart3, label: "Dashboard", path: "/" },
@@ -37,6 +37,13 @@ const menuItems = [
   { icon: CreditCard, label: "Cash Flow", path: "/cash-flow" },
   { icon: PieChart, label: "P&L Analysis", path: "/pl-analysis" },
   { icon: Zap, label: "Working Capital", path: "/working-capital" },
+];
+
+const dataMenuItems = [
+  { label: "Customers", path: "/manage-customers" },
+  { label: "Locations", path: "/manage-locations" },
+  { label: "AR Records", path: "/manage-ar-records" },
+  { label: "Budgets", path: "/manage-budgets" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -96,15 +103,15 @@ export default function DashboardLayout({
     <DateRangeProvider>
       <LocationProvider>
         <SidebarProvider
-        style={
-          {
-            "--sidebar-width": `${sidebarWidth}px`,
-          } as CSSProperties
-        }
-      >
-        <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
-          {children}
-        </DashboardLayoutContent>
+          style={
+            {
+              "--sidebar-width": `${sidebarWidth}px`,
+            } as CSSProperties
+          }
+        >
+          <DashboardLayoutContent setSidebarWidth={setSidebarWidth}>
+            {children}
+          </DashboardLayoutContent>
         </SidebarProvider>
       </LocationProvider>
     </DateRangeProvider>
@@ -120,7 +127,6 @@ function DashboardLayoutContent({
   children,
   setSidebarWidth,
 }: DashboardLayoutContentProps) {
-
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -192,7 +198,7 @@ function DashboardLayoutContent({
             </div>
           </SidebarHeader>
 
-          <SidebarContent className="gap-0">
+          <SidebarContent className="gap-0 flex-1 overflow-y-auto">
             <SidebarMenu className="px-2 py-4">
               {menuItems.map((item) => {
                 const isActive = location === item.path;
@@ -213,6 +219,32 @@ function DashboardLayoutContent({
                 );
               })}
             </SidebarMenu>
+
+            <div className="px-2 py-4 border-t">
+              <p className="text-xs font-semibold text-muted-foreground px-2 mb-3 uppercase tracking-wide">
+                Data Management
+              </p>
+              <SidebarMenu>
+                {dataMenuItems.map((item) => {
+                  const isActive = location === item.path;
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        onClick={() => setLocation(item.path)}
+                        tooltip={item.label}
+                        className={`h-10 transition-all font-normal text-sm ${
+                          isActive ? "bg-accent text-accent-foreground" : ""
+                        }`}
+                      >
+                        <Database className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </div>
           </SidebarContent>
 
           <SidebarFooter className="p-3 border-t">
@@ -250,44 +282,30 @@ function DashboardLayoutContent({
           className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${
             isCollapsed ? "hidden" : ""
           }`}
-          onMouseDown={() => {
-            if (isCollapsed) return;
-            setIsResizing(true);
-          }}
-          style={{ zIndex: 50 }}
+          onMouseDown={() => setIsResizing(true)}
         />
       </div>
 
       <SidebarInset>
-        {!isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <div className="flex items-center gap-3">
-              <span className="tracking-tight text-foreground font-semibold">
-                {activeMenuItem?.label ?? "Financial Analytics"}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <DateRangePicker />
-              <LocationSelector />
-            </div>
-          </div>
-        )}
-        {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-1">
-                  <span className="tracking-tight text-foreground font-semibold">
-                    {activeMenuItem?.label ?? "Financial Analytics"}
-                  </span>
-                </div>
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-background px-4">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1" />
+            {activeMenuItem && !isMobile && (
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <span>/</span>
+                <span>{activeMenuItem.label}</span>
               </div>
-            </div>
-            <LocationSelector />
+            )}
           </div>
-        )}
-        <main className="flex-1 p-4">{children}</main>
+          <div className="flex items-center gap-4">
+            <LocationSelector />
+            <DateRangePicker />
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-auto bg-background">
+          <div className="h-full">{children}</div>
+        </main>
       </SidebarInset>
     </>
   );

@@ -88,11 +88,13 @@
 - [x] Create tRPC procedures for CRUD operations (create, read, update, delete) - 4 routers (customers, locations, arRecords, budgets)
 - [x] Add data validation and error handling with Zod schemas
 - [x] Write and pass 19 unit tests for data management router
-- [ ] Build AR Records management page with add/edit/delete forms
-- [ ] Build Budget management page with add/edit/delete forms
-- [ ] Build Customers management page with add/edit/delete forms
-- [ ] Build Locations management page with add/edit/delete forms
-- [ ] Create data management navigation in sidebar
+- [x] Build Customers management page with data table and add/edit forms (ManageCustomers.tsx)
+- [x] Build Locations management page with data table and add/edit forms (ManageLocations.tsx)
+- [x] Build AR Records management page with data table and add/edit forms (ManageARRecords.tsx)
+- [x] Build Budget management page with data table and add/edit forms (ManageBudgets.tsx)
+- [x] Create data management navigation in sidebar (Data Management section)
+- [x] Add delete confirmation dialogs for safety (AlertDialog in DataTable)
+- [x] Implement data table pagination and sorting (DataTable component)
 
 ## Phase 11: Data Export & Date Filtering
 - [x] Create date range filtering context and hooks (DateRangeContext.tsx)
