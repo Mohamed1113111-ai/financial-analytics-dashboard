@@ -175,3 +175,57 @@
     }
   }
 }
+/* Financial Dashboard Styles */
+@layer utilities {
+  .financial-card {
+    @apply rounded-lg border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md;
+  }
+
+  .metric-label {
+    @apply text-sm font-medium text-muted-foreground;
+  }
+
+  .metric-value {
+    @apply text-3xl font-bold text-foreground;
+  }
+
+  .metric-change.positive {
+    @apply text-green-600 dark:text-green-400;
+  }
+
+  .metric-change.negative {
+    @apply text-red-600 dark:text-red-400;
+  }
+
+  .status-badge.favorable {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200;
+  }
+
+  .status-badge.unfavorable {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200;
+  }
+
+  .financial-value.positive {
+    @apply text-right font-mono text-green-600 dark:text-green-400;
+  }
+
+  .financial-value.negative {
+    @apply text-right font-mono text-red-600 dark:text-red-400;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-foreground;
+  }
+
+  .grid-2col {
+    @apply grid gap-6 md:grid-cols-2;
+  }
+
+  .grid-3col {
+    @apply grid gap-6 md:grid-cols-3;
+  }
+
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+}

@@ -1,0 +1,92 @@
+# Financial Analytics & Dashboard - Project TODO
+
+## Phase 1: Architecture & Data Models
+- [x] Design system architecture and entity relationships
+- [x] Define financial calculation formulas and business logic
+- [x] Plan database schema for multi-location support
+- [x] Design API contract for frontend-backend communication
+
+## Phase 2: Database & Calculation Engines
+- [x] Create database schema (locations, customers, AR, AP, transactions)
+- [x] Build AR aging calculation engine
+- [x] Build cash flow calculation engine
+- [x] Build P&L calculation engine
+- [x] Build working capital calculation engine
+- [x] Create database migration scripts
+- [x] Write and pass unit tests for calculation engines (21 tests passing)
+
+## Phase 3: Dashboard UI & Navigation
+- [x] Design elegant dashboard layout with sidebar navigation
+- [x] Create responsive design system with Tailwind
+- [x] Implement DashboardLayout component with financial branding
+- [x] Build main dashboard home page with KPI metrics
+- [x] Create navigation structure for all modules
+
+## Phase 4: AR Forecasting Module
+- [ ] Create AR aging data model and queries (database schema ready)
+- [ ] Build AR forecast calculation logic (engine ready, tested)
+- [ ] Implement collection probability modeling (engine ready)
+- [ ] Create AR aging analysis UI
+- [ ] Build AR forecast visualization with Recharts
+- [ ] Create AR risk heatmap
+- [ ] Implement location and customer filtering
+
+## Phase 5: Cash Flow Statement Module
+- [ ] Create cash flow data model
+- [ ] Build cash flow calculation engine (operating, investing, financing)
+- [ ] Create cash flow statement UI
+- [ ] Build cash waterfall visualization
+- [ ] Implement monthly rolling forecast
+- [ ] Add scenario modeling (base, optimistic, conservative)
+
+## Phase 6: P&L Statement Module
+- [ ] Create P&L data model
+- [ ] Build P&L calculation engine (revenue, COGS, expenses, margins)
+- [ ] Create P&L statement UI
+- [ ] Implement location comparison view
+- [ ] Build margin analysis charts
+- [ ] Add actual vs budget variance analysis
+- [ ] Implement YoY and MoM trend analysis
+
+## Phase 7: Working Capital Analysis Module
+- [ ] Create working capital data model
+- [ ] Build WC calculation engine (DSO, DPO, DIO, CCC)
+- [ ] Create working capital dashboard UI
+- [ ] Build KPI scorecards
+- [ ] Implement trend analysis visualization
+- [ ] Add cash impact visualization
+- [ ] Create improvement scenario modeling
+
+## Phase 8: Data Visualization & Charting
+- [ ] Set up Recharts integration
+- [ ] Create reusable chart components
+- [ ] Build line charts for trends
+- [ ] Build bar charts for comparisons
+- [ ] Build heatmaps for AR analysis
+- [ ] Build waterfall charts for cash flow
+- [ ] Implement interactive filters and drill-down
+
+## Phase 9: Export Functionality
+- [ ] Implement PDF export for financial reports
+- [ ] Implement Excel export for detailed data
+- [ ] Create report templates
+- [ ] Add export button to each module
+- [ ] Test export quality and formatting
+
+## Phase 10: Testing & Delivery
+- [ ] Write unit tests for calculation engines
+- [ ] Write integration tests for data flows
+- [ ] Perform end-to-end testing
+- [ ] Validate financial calculations
+- [ ] Test multi-location filtering
+- [ ] Test export functionality
+- [ ] Create user documentation
+- [ ] Deliver final system to user
+
+## Optional Advanced Features (Future)
+- [ ] Predictive analytics for cash shortfalls
+- [ ] Automated alerts for covenant/liquidity risks
+- [ ] AI-based anomaly detection
+- [ ] Management summary page (1-page CFO view)
+- [ ] Real-time data refresh
+- [ ] Custom report builder
