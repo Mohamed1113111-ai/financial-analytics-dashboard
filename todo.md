@@ -233,3 +233,21 @@
 - [x] Add Export CSV button to AR Records page
 - [x] Add Export Excel button to Budgets page
 - [x] Add Export CSV button to Budgets page
+
+
+## Phase 17: Import Templates & Guides
+- [x] Create template generator utility for Excel and CSV formats (templateGenerator.ts)
+- [x] Generate Customers import template with example data (2 example rows)
+- [x] Generate Locations import template with example data (2 example rows)
+- [x] Generate AR Records import template with example data (2 example rows)
+- [x] Generate Budgets import template with example data (2 example rows)
+- [x] Add Download Template (Excel) button to Customers page
+- [x] Add Download Template (CSV) button to Customers page
+- [x] Add Download Template (Excel) button to Locations page
+- [x] Add Download Template (CSV) button to Locations page
+- [x] Add Download Template (Excel) button to AR Records page
+- [x] Add Download Template (CSV) button to AR Records page
+- [x] Add Download Template (Excel) button to Budgets page
+- [x] Add Download Template (CSV) button to Budgets page
+- [x] Create import guide/documentation for each template (Instructions sheet in Excel templates)
+- [x] Test template downloads and format validation

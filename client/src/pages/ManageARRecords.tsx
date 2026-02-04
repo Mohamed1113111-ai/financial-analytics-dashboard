@@ -32,6 +32,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Plus, Upload, Download } from "lucide-react";
 import { exportToExcel, exportToCSV } from "@/utils/exportUtils";
+import { downloadExcelTemplate, downloadCSVTemplate } from "@/utils/templateGenerator";
 import { FileImportDialog } from "@/components/FileImportDialog";
 import { FilePreviewDialog } from "@/components/FilePreviewDialog";
 
@@ -246,6 +247,34 @@ export default function ManageARRecords() {
             >
               <Download className="w-4 h-4 mr-2" />
               Export CSV
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                try {
+                  downloadExcelTemplate('arRecords');
+                  toast.success('AR Records template downloaded');
+                } catch (error) {
+                  toast.error('Failed to download template');
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Template (Excel)
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                try {
+                  downloadCSVTemplate('arRecords');
+                  toast.success('AR Records template downloaded');
+                } catch (error) {
+                  toast.error('Failed to download template');
+                }
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Template (CSV)
             </Button>
           </div>
         </div>
