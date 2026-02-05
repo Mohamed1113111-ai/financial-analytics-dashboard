@@ -272,3 +272,30 @@
 - [ ] Add role management interface for admins
 - [ ] Write unit tests for RBAC system (target: 15+ tests)
 - [ ] Test permission enforcement on all pages
+
+
+## Phase 19: UI & Logic Review & Fixes
+- [x] Review Dashboard page UI and logic - Using mock data, needs real database
+- [x] Review AR Forecast page UI and logic - Using mock data, needs real database
+- [x] Review Cash Flow page UI and logic - Using mock data, needs real database
+- [x] Review P&L Analysis page UI and logic - Using mock data, needs real database
+- [x] Review Working Capital page UI and logic - Using mock data, needs real database
+- [x] Review Alerts page UI and logic - Using mock data, needs real database
+- [x] Review data management pages (Customers, Locations, AR Records, Budgets)
+- [ ] Connect Dashboard to real database for AR and cash flow metrics
+- [ ] Connect AR Forecast to real database for aging and DSO data
+- [ ] Connect Cash Flow to real database for transaction data
+- [ ] Connect P&L Analysis to real database for revenue and expense data
+- [ ] Connect Working Capital to real database for inventory and AP data
+- [ ] Connect Alerts to real database for risk scoring
+- [ ] Implement location filtering across all dashboards
+- [ ] Implement date range filtering across all dashboards
+- [ ] Test all pages with real data
+- [ ] Verify responsive design on mobile
+- [ ] Check error handling and edge cases
+
+
+## Phase 20: Bug Fixes & Improvements
+- [x] Fix View Details button on AR Forecast page - Fixed by adding proper navigation with wouter hooks
+- [x] Implement customer details modal for AR Forecast - Added Dialog component with customer details, AR balance, days outstanding, status, trend, and recommended actions
+- [ ] Add sorting and filtering to customer list

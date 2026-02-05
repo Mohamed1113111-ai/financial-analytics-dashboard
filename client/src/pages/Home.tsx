@@ -4,10 +4,55 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2, TrendingUp, TrendingDown, DollarSign, Zap, PieChart } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "@/contexts/LocationContext";
+import { useLocation as useNavigate } from "wouter";
 
 /**
  * Financial Dashboard - Main landing page with KPI metrics
  */
+function QuickLinksSection() {
+  const [, navigate] = useNavigate();
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <CardTitle className="text-lg">AR Forecast</CardTitle>
+          <CardDescription>View collection forecasts and aging analysis</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="outline" className="w-full" onClick={() => navigate("/ar-forecast")}>
+            View Details
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <CardTitle className="text-lg">Cash Flow</CardTitle>
+          <CardDescription>Analyze cash flow statements and scenarios</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="outline" className="w-full" onClick={() => navigate("/cash-flow")}>
+            View Details
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <CardTitle className="text-lg">P&L Analysis</CardTitle>
+          <CardDescription>Review profitability and variance analysis</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="outline" className="w-full" onClick={() => navigate("/pl-analysis")}>
+            View Details
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
   const { selectedLocations } = useLocation();
@@ -236,43 +281,7 @@ export default function Home() {
       )}
 
       {/* Quick Links */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">AR Forecast</CardTitle>
-            <CardDescription>View collection forecasts and aging analysis</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full">
-              View Details
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">Cash Flow</CardTitle>
-            <CardDescription>Analyze cash flow statements and scenarios</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full">
-              View Details
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="text-lg">P&L Analysis</CardTitle>
-            <CardDescription>Review profitability and variance analysis</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full">
-              View Details
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <QuickLinksSection />
     </div>
   );
 }
