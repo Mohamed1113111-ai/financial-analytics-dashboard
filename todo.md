@@ -298,4 +298,5 @@
 ## Phase 20: Bug Fixes & Improvements
 - [x] Fix View Details button on AR Forecast page - Fixed by adding proper navigation with wouter hooks
 - [x] Implement customer details modal for AR Forecast - Added Dialog component with customer details, AR balance, days outstanding, status, trend, and recommended actions
+- [x] Fix Select.Item empty value error - Changed empty string value to '__skip__' and updated handleMapping logic
 - [ ] Add sorting and filtering to customer list

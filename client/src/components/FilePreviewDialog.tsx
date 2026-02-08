@@ -40,10 +40,15 @@ export function FilePreviewDialog({
   };
 
   const handleMapping = (sourceField: string, targetField: string) => {
-    setMappings((prev) => ({
-      ...prev,
-      [sourceField]: targetField,
-    }));
+    setMappings((prev) => {
+      const newMappings = { ...prev };
+      if (targetField === "__skip__") {
+        delete newMappings[sourceField];
+      } else {
+        newMappings[sourceField] = targetField;
+      }
+      return newMappings;
+    });
   };
 
   const handleConfirm = () => {
@@ -124,7 +129,7 @@ export function FilePreviewDialog({
                         <SelectValue placeholder="Select target field" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Skip this column</SelectItem>
+                        <SelectItem value="__skip__">Skip this column</SelectItem>
                         {headers.map((h) => (
                           <SelectItem key={h} value={h}>
                             {h}
