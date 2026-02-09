@@ -1,0 +1,9 @@
+{
+  "query": "-- Insert P&L Statement data\nINSERT INTO plStatement (locationId, periodId, revenue, cogs, grossProfit, grossMargin, operatingExpenses, ebitda, ebitdaMargin, netProfit, netMargin, calculatedAt) VALUES\n(1, 1, 320000, 128000, 192000, 60.00, 85000, 107000, 33.44, 85600, 26.75, NOW()),\n(2, 1, 210000, 105000, 105000, 50.00, 65000, 40000, 19.05, 32000, 15.24, NOW()),\n(3, 1, 150000, 90000, 60000, 40.00, 45000, 15000, 10.00, 12000, 8.00, NOW()),\n(4, 1, 280000, 112000, 168000, 60.00, 95000, 73000, 26.07, 58400, 20.86, NOW()),\n(1, 1, 200000, 100000, 100000, 50.00, 60000, 40000, 20.00, 32000, 16.00, NOW())\nON DUPLICATE KEY UPDATE revenue=VALUES(revenue);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute -- Insert P&L Statement data\nINSERT INTO plStatement (locationId, periodId, revenue, cogs, grossProfit, grossMargin, operatingExpenses, ebitda, ebitdaMargin, netProfit, netMargin, calculatedAt) VALUES\n(1, 1, 320000, 128000, 192000, 60.00, 85000, 107000, 33.44, 85600, 26.75, NOW()),\n(2, 1, 210000, 105000, 105000, 50.00, 65000, 40000, 19.05, 32000, 15.24, NOW()),\n(3, 1, 150000, 90000, 60000, 40.00, 45000, 15000, 10.00, 12000, 8.00, NOW()),\n(4, 1, 280000, 112000, 168000, 60.00, 95000, 73000, 26.07, 58400, 20.86, NOW()),\n(1, 1, 200000, 100000, 100000, 50.00, 60000, 40000, 20.00, 32000, 16.00, NOW())\nON DUPLICATE KEY UPDATE revenue=VALUES(revenue);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1521
+}

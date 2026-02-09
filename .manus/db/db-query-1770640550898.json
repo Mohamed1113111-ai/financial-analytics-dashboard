@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO customers (locationId, name, code, creditLimit, paymentTerms, status, createdAt, updatedAt) VALUES\n(1, 'Al Noor Trading', 'CUST001', 150000, 30, 'active', NOW(), NOW()),\n(2, 'Red Sea Logistics', 'CUST002', 300000, 30, 'active', NOW(), NOW()),\n(3, 'Gulf Medical Supplies', 'CUST003', 200000, 30, 'active', NOW(), NOW()),\n(1, 'Desert Construction Co', 'CUST004', 500000, 30, 'active', NOW(), NOW()),\n(2, 'Blue Horizon Services', 'CUST005', 100000, 30, 'inactive', NOW(), NOW())\nON DUPLICATE KEY UPDATE status=VALUES(status);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute INSERT INTO customers (locationId, name, code, creditLimit, paymentTerms, status, createdAt, updatedAt) VALUES\n(1, 'Al Noor Trading', 'CUST001', 150000, 30, 'active', NOW(), NOW()),\n(2, 'Red Sea Logistics', 'CUST002', 300000, 30, 'active', NOW(), NOW()),\n(3, 'Gulf Medical Supplies', 'CUST003', 200000, 30, 'active', NOW(), NOW()),\n(1, 'Desert Construction Co', 'CUST004', 500000, 30, 'active', NOW(), NOW()),\n(2, 'Blue Horizon Services', 'CUST005', 100000, 30, 'inactive', NOW(), NOW())\nON DUPLICATE KEY UPDATE status=VALUES(status);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1561
+}

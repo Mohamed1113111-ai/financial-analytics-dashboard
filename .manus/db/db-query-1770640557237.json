@@ -1,0 +1,9 @@
+{
+  "query": "-- First, ensure we have time periods\nINSERT INTO timePeriods (periodDate, month, year, quarter, periodName, createdAt) VALUES\n('2025-12-01', 12, 2025, 4, '2025-12', NOW()),\n('2026-01-01', 1, 2026, 1, '2026-01', NOW())\nON DUPLICATE KEY UPDATE periodName=VALUES(periodName);\n\n-- Insert AR Aging data\nINSERT INTO arAging (locationId, customerId, periodId, amount0_30, amount31_60, amount61_90, amount90_plus, totalAR, createdAt, updatedAt) VALUES\n(1, 1, 1, 45000, 0, 0, 0, 45000, NOW(), NOW()),\n(2, 2, 1, 0, 120000, 0, 0, 120000, NOW(), NOW()),\n(3, 3, 1, 0, 0, 78000, 0, 78000, NOW(), NOW()),\n(4, 1, 1, 56000, 0, 0, 0, 56000, NOW(), NOW()),\n(1, 4, 1, 0, 0, 0, 210000, 210000, NOW(), NOW())\nON DUPLICATE KEY UPDATE totalAR=VALUES(totalAR);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute -- First, ensure we have time periods\nINSERT INTO timePeriods (periodDate, month, year, quarter, periodName, createdAt) VALUES\n('2025-12-01', 12, 2025, 4, '2025-12', NOW()),\n('2026-01-01', 1, 2026, 1, '2026-01', NOW())\nON DUPLICATE KEY UPDATE periodName=VALUES(periodName);\n\n-- Insert AR Aging data\nINSERT INTO arAging (locationId, customerId, periodId, amount0_30, amount31_60, amount61_90, amount90_plus, totalAR, createdAt, updatedAt) VALUES\n(1, 1, 1, 45000, 0, 0, 0, 45000, NOW(), NOW()),\n(2, 2, 1, 0, 120000, 0, 0, 120000, NOW(), NOW()),\n(3, 3, 1, 0, 0, 78000, 0, 78000, NOW(), NOW()),\n(4, 1, 1, 56000, 0, 0, 0, 56000, NOW(), NOW()),\n(1, 4, 1, 0, 0, 0, 210000, 210000, NOW(), NOW())\nON DUPLICATE KEY UPDATE totalAR=VALUES(totalAR);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1732
+}

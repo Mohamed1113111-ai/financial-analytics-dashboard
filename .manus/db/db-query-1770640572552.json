@@ -1,0 +1,9 @@
+{
+  "query": "-- Insert Cash Flow Statement data with correct columns\nINSERT INTO cashFlowStatement (locationId, periodId, scenario, operatingCashFlow, investingCashFlow, financingCashFlow, netCashFlow, openingCash, closingCash, calculatedAt) VALUES\n(1, 1, 'base', 45000, -10000, -5000, 30000, 70000, 100000, NOW()),\n(2, 1, 'base', 60000, -8000, -3000, 49000, 36000, 85000, NOW()),\n(3, 1, 'base', -40000, -5000, 0, -45000, 95000, 50000, NOW()),\n(1, 1, 'base', -75000, -2000, 0, -77000, 107000, 30000, NOW()),\n(4, 1, 'base', 56000, -3000, -2000, 51000, 69000, 120000, NOW())\nON DUPLICATE KEY UPDATE netCashFlow=VALUES(netCashFlow);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute -- Insert Cash Flow Statement data with correct columns\nINSERT INTO cashFlowStatement (locationId, periodId, scenario, operatingCashFlow, investingCashFlow, financingCashFlow, netCashFlow, openingCash, closingCash, calculatedAt) VALUES\n(1, 1, 'base', 45000, -10000, -5000, 30000, 70000, 100000, NOW()),\n(2, 1, 'base', 60000, -8000, -3000, 49000, 36000, 85000, NOW()),\n(3, 1, 'base', -40000, -5000, 0, -45000, 95000, 50000, NOW()),\n(1, 1, 'base', -75000, -2000, 0, -77000, 107000, 30000, NOW()),\n(4, 1, 'base', 56000, -3000, -2000, 51000, 69000, 120000, NOW())\nON DUPLICATE KEY UPDATE netCashFlow=VALUES(netCashFlow);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1555
+}
