@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 
 export interface Location {
   id: number;
@@ -17,22 +18,32 @@ export interface LocationContextType {
   clearLocations: () => void;
   isLocationSelected: (locationId: number) => boolean;
   getSelectedLocationNames: () => string[];
+  isLoading: boolean;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
-// Mock locations - in production these would come from the database
-const MOCK_LOCATIONS: Location[] = [
-  { id: 1, name: "New York", code: "NY", region: "Northeast", isActive: true },
-  { id: 2, name: "Los Angeles", code: "LA", region: "West", isActive: true },
-  { id: 3, name: "Chicago", code: "CHI", region: "Midwest", isActive: true },
-  { id: 4, name: "Houston", code: "HOU", region: "South", isActive: true },
-  { id: 5, name: "Miami", code: "MIA", region: "Southeast", isActive: true },
-  { id: 6, name: "Seattle", code: "SEA", region: "Northwest", isActive: true },
-];
-
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedLocations, setSelectedLocations] = useState<number[]>([4, 5, 6]); // Default to Houston, Miami, Seattle
+  const [selectedLocations, setSelectedLocations] = useState<number[]>([7, 8, 9, 10, 11, 12, 13]); // Default to Saudi Arabia & UAE locations
+  const [allLocations, setAllLocations] = useState<Location[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch locations from database
+  const { data: locationsData } = trpc.locations.list.useQuery();
+
+  useEffect(() => {
+    if (locationsData) {
+      const formattedLocations: Location[] = locationsData.map((loc: any) => ({
+        id: loc.id,
+        name: loc.name,
+        code: loc.code,
+        region: loc.region,
+        isActive: loc.status === "active",
+      }));
+      setAllLocations(formattedLocations);
+      setIsLoading(false);
+    }
+  }, [locationsData]);
 
   const toggleLocation = useCallback((locationId: number) => {
     setSelectedLocations((prev) =>
@@ -43,8 +54,8 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   const selectAllLocations = useCallback(() => {
-    setSelectedLocations(MOCK_LOCATIONS.map((loc) => loc.id));
-  }, []);
+    setSelectedLocations(allLocations.map((loc) => loc.id));
+  }, [allLocations]);
 
   const clearLocations = useCallback(() => {
     setSelectedLocations([]);
@@ -57,19 +68,20 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const getSelectedLocationNames = useCallback(() => {
     return selectedLocations
-      .map((id) => MOCK_LOCATIONS.find((loc) => loc.id === id)?.name || "")
+      .map((id) => allLocations.find((loc) => loc.id === id)?.name || "")
       .filter(Boolean);
-  }, [selectedLocations]);
+  }, [selectedLocations, allLocations]);
 
   const value: LocationContextType = {
     selectedLocations,
-    allLocations: MOCK_LOCATIONS,
+    allLocations,
     toggleLocation,
     setSelectedLocations,
     selectAllLocations,
     clearLocations,
     isLocationSelected,
     getSelectedLocationNames,
+    isLoading,
   };
 
   return (
