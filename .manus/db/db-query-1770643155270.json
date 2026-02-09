@@ -1,0 +1,15 @@
+{
+  "query": "SELECT COUNT(*) as total_customers, MIN(code) as first_customer, MAX(code) as last_customer FROM customers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute SELECT COUNT(*) as total_customers, MIN(code) as first_customer, MAX(code) as last_customer FROM customers;",
+  "rows": [
+    {
+      "total_customers": "510",
+      "first_customer": "ACME-001",
+      "last_customer": "TEST-001"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_customers\tfirst_customer\tlast_customer\n510\tACME-001\tTEST-001\n",
+  "stderr": "",
+  "execution_time_ms": 1611
+}

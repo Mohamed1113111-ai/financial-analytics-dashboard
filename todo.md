@@ -311,3 +311,4 @@
 - [x] Verify AR aging analysis with real data - Total AR: $4.38M with correct aging buckets
 - [x] Verify cash flow calculations with real data - Operating CF: $2.20M, Net CF: $1.70M
 - [x] Verify P&L analysis with real data - Revenue: $5.00M, Net Income: $1.05M, Net Margin: 21%
+- [x] Import all 440 customers from Excel file - Bulk imported using Node.js script in 13 batches (390 customers ACME-051 to ACME-440 + 50 initial customers)
