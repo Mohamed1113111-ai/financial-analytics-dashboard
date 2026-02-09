@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO plStatement (locationId, periodId, revenue, cogs, grossProfit, grossMargin, operatingExpenses, ebitda, ebitdaMargin, netProfit, netMargin, calculatedAt) VALUES\n(1, 1, 530000, 0, 530000, 100.00, 285000, 245000, 46.23, -40000, -7.55, NOW())\nON DUPLICATE KEY UPDATE revenue=VALUES(revenue), cogs=VALUES(cogs), grossProfit=VALUES(grossProfit), operatingExpenses=VALUES(operatingExpenses), netProfit=VALUES(netProfit);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute INSERT INTO plStatement (locationId, periodId, revenue, cogs, grossProfit, grossMargin, operatingExpenses, ebitda, ebitdaMargin, netProfit, netMargin, calculatedAt) VALUES\n(1, 1, 530000, 0, 530000, 100.00, 285000, 245000, 46.23, -40000, -7.55, NOW())\nON DUPLICATE KEY UPDATE revenue=VALUES(revenue), cogs=VALUES(cogs), grossProfit=VALUES(grossProfit), operatingExpenses=VALUES(operatingExpenses), netProfit=VALUES(netProfit);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1587
+}

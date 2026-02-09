@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO locations (name, code, region, status, createdAt, updatedAt) VALUES\n('Riyadh Head Office', 'RUH-HO', 'Central', 'active', NOW(), NOW()),\n('Jeddah Branch', 'JED-BR', 'West', 'active', NOW(), NOW()),\n('Dammam Warehouse', 'DMM-WH', 'East', 'active', NOW(), NOW()),\n('NEOM Site', 'NEOM-ST', 'North West', 'active', NOW(), NOW()),\n('Medina Office', 'MED-OF', 'West', 'inactive', NOW(), NOW())\nON DUPLICATE KEY UPDATE status=VALUES(status);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute INSERT INTO locations (name, code, region, status, createdAt, updatedAt) VALUES\n('Riyadh Head Office', 'RUH-HO', 'Central', 'active', NOW(), NOW()),\n('Jeddah Branch', 'JED-BR', 'West', 'active', NOW(), NOW()),\n('Dammam Warehouse', 'DMM-WH', 'East', 'active', NOW(), NOW()),\n('NEOM Site', 'NEOM-ST', 'North West', 'active', NOW(), NOW()),\n('Medina Office', 'MED-OF', 'West', 'inactive', NOW(), NOW())\nON DUPLICATE KEY UPDATE status=VALUES(status);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1519
+}

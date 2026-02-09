@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO arAging (locationId, customerId, periodId, amount0_30, amount31_60, amount61_90, amount90_plus, totalAR, createdAt, updatedAt) VALUES\n(1, 446, 1, 101000, 0, 0, 0, 101000, NOW(), NOW()),\n(1, 447, 1, 0, 120000, 0, 0, 120000, NOW(), NOW()),\n(1, 448, 1, 0, 0, 78000, 0, 78000, NOW(), NOW()),\n(1, 449, 1, 0, 0, 0, 210000, 210000, NOW(), NOW())\nON DUPLICATE KEY UPDATE amount0_30=VALUES(amount0_30), amount31_60=VALUES(amount31_60), amount61_90=VALUES(amount61_90), amount90_plus=VALUES(amount90_plus), totalAR=VALUES(totalAR);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute INSERT INTO arAging (locationId, customerId, periodId, amount0_30, amount31_60, amount61_90, amount90_plus, totalAR, createdAt, updatedAt) VALUES\n(1, 446, 1, 101000, 0, 0, 0, 101000, NOW(), NOW()),\n(1, 447, 1, 0, 120000, 0, 0, 120000, NOW(), NOW()),\n(1, 448, 1, 0, 0, 78000, 0, 78000, NOW(), NOW()),\n(1, 449, 1, 0, 0, 0, 210000, 210000, NOW(), NOW())\nON DUPLICATE KEY UPDATE amount0_30=VALUES(amount0_30), amount31_60=VALUES(amount31_60), amount61_90=VALUES(amount61_90), amount90_plus=VALUES(amount90_plus), totalAR=VALUES(totalAR);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1549
+}

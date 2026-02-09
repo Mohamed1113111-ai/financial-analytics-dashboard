@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO cashFlowStatement (locationId, periodId, scenario, operatingCashFlow, investingCashFlow, financingCashFlow, netCashFlow, openingCash, closingCash, calculatedAt) VALUES\n(1, 1, 'base', 161000, -115000, 0, 46000, 3520000, 3566000, NOW())\nON DUPLICATE KEY UPDATE operatingCashFlow=VALUES(operatingCashFlow), investingCashFlow=VALUES(investingCashFlow), financingCashFlow=VALUES(financingCashFlow), netCashFlow=VALUES(netCashFlow);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute INSERT INTO cashFlowStatement (locationId, periodId, scenario, operatingCashFlow, investingCashFlow, financingCashFlow, netCashFlow, openingCash, closingCash, calculatedAt) VALUES\n(1, 1, 'base', 161000, -115000, 0, 46000, 3520000, 3566000, NOW())\nON DUPLICATE KEY UPDATE operatingCashFlow=VALUES(operatingCashFlow), investingCashFlow=VALUES(investingCashFlow), financingCashFlow=VALUES(financingCashFlow), netCashFlow=VALUES(netCashFlow);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1575
+}

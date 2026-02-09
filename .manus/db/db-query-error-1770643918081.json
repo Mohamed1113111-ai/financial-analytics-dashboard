@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO arRecords (customerId, locationId, invoiceNumber, invoiceDate, amount, daysOutstanding, createdAt, updatedAt) VALUES\n(446, 1, 'INV-1001', '2025-12-01', 45000, 30, NOW(), NOW()),\n(447, 1, 'INV-1002', '2025-11-15', 120000, 46, NOW(), NOW()),\n(448, 1, 'INV-1003', '2025-10-20', 78000, 72, NOW(), NOW()),\n(446, 1, 'INV-1004', '2025-12-10', 56000, 21, NOW(), NOW()),\n(449, 1, 'INV-1005', '2025-09-30', 210000, 92, NOW(), NOW())\nON DUPLICATE KEY UPDATE daysOutstanding=VALUES(daysOutstanding);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ASC1anBDsTVdvB.root --database jgRt7wEGn5EhxQgQxBxbVR --execute INSERT INTO arRecords (customerId, locationId, invoiceNumber, invoiceDate, amount, daysOutstanding, createdAt, updatedAt) VALUES\n(446, 1, 'INV-1001', '2025-12-01', 45000, 30, NOW(), NOW()),\n(447, 1, 'INV-1002', '2025-11-15', 120000, 46, NOW(), NOW()),\n(448, 1, 'INV-1003', '2025-10-20', 78000, 72, NOW(), NOW()),\n(446, 1, 'INV-1004', '2025-12-10', 56000, 21, NOW(), NOW()),\n(449, 1, 'INV-1005', '2025-09-30', 210000, 92, NOW(), NOW())\nON DUPLICATE KEY UPDATE daysOutstanding=VALUES(daysOutstanding);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table 'jgrt7wegn5ehxqgqxbxbvr.arRecords' doesn't exist"
+  ]
+}
