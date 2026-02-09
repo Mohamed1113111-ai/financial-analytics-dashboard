@@ -32,7 +32,7 @@ const MOCK_LOCATIONS: Location[] = [
 ];
 
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedLocations, setSelectedLocations] = useState<number[]>([1, 2, 3]); // Default to first 3
+  const [selectedLocations, setSelectedLocations] = useState<number[]>([4, 5, 6]); // Default to Houston, Miami, Seattle
 
   const toggleLocation = useCallback((locationId: number) => {
     setSelectedLocations((prev) =>

@@ -324,3 +324,10 @@
 - [x] Add create new location modal and form - Create dialog with all required fields
 - [x] Test all locations management features - All CRUD operations tested and working
 - [x] Verify location changes reflect in AR analysis and dashboards - New Dubai Office location created and displayed
+
+
+## Phase 23: Update Location Selector
+- [x] Remove New York, Los Angeles, Chicago from default selected locations - Updated LocationContext.tsx default state from [1,2,3] to [4,5,6]
+- [x] Add Houston, Miami, Seattle and other available locations as defaults - Houston (id:4), Miami (id:5), Seattle (id:6) now selected
+- [x] Test location selector in dashboard - Location dropdown verified showing correct selections
+- [x] Verify all dashboards display correct location-filtered data - Dashboard, AR Forecast, Cash Flow, and P&L all showing filtered metrics
