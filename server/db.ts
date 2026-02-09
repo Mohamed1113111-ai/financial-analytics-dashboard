@@ -114,11 +114,38 @@ export async function getAllLocations() {
   return await db.select().from(locations).where(eq(locations.status, "active"));
 }
 
+export async function getAllLocationsIncludingInactive() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(locations).orderBy(desc(locations.createdAt));
+}
+
 export async function getLocationById(locationId: number) {
   const db = await getDb();
   if (!db) return null;
   const result = await db.select().from(locations).where(eq(locations.id, locationId)).limit(1);
   return result[0] || null;
+}
+
+export async function createLocation(data: { name: string; code: string; region?: string; country?: string; status: "active" | "inactive" }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(locations).values(data);
+  return result;
+}
+
+export async function updateLocation(locationId: number, data: Partial<{ name: string; code: string; region?: string; country?: string; status: "active" | "inactive" }>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.update(locations).set(data).where(eq(locations.id, locationId));
+  return result;
+}
+
+export async function deleteLocation(locationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.delete(locations).where(eq(locations.id, locationId));
+  return result;
 }
 
 // ============================================================================

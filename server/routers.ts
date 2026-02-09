@@ -7,6 +7,7 @@ import { publicProcedure, router } from "./_core/trpc";
 import { cashflowRouter } from "./routers/cashflow";
 import { plRouter } from "./routers/pl";
 import { workingCapitalRouter } from "./routers/workingcapital";
+import { locationsRouter } from "./routers/locations";
 
 export const appRouter = router({
   data: dataRouter,
@@ -26,6 +27,7 @@ export const appRouter = router({
   cashflow: cashflowRouter,
   pl: plRouter,
   workingCapital: workingCapitalRouter,
+  locations: locationsRouter,
 
   // TODO: add feature routers here, e.g.
   // ar: router({ ... }),

@@ -15,6 +15,7 @@ import ManageLocations from "./pages/ManageLocations";
 import ManageARRecords from "./pages/ManageARRecords";
 import ManageBudgets from "./pages/ManageBudgets";
 import Alerts from "./pages/Alerts";
+import Locations from "./pages/Locations";
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
         <Route path={"/manage-locations"} component={ManageLocations} />
         <Route path={"/manage-ar-records"} component={ManageARRecords} />
         <Route path={"/manage-budgets"} component={ManageBudgets} />
+        <Route path={"locations"} component={Locations} />
         <Route path={"/404"} component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />
